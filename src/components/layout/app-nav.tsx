@@ -68,7 +68,7 @@ export function AppSidebar({
           );
         })}
       </nav>
-      <div className="mt-4 rounded-[1.1rem] border border-[rgba(7,22,74,0.08)] bg-white/55 p-3 shadow-[inset_0_1px_0_#fff]">
+      <div className="mt-4 rounded-lg border border-[rgba(7,22,74,0.1)] bg-white p-3">
         <p className="text-sm font-semibold text-[var(--spm-navy)]">{userName}</p>
         <p className="truncate text-xs text-[var(--spm-text-muted)]">{userEmail}</p>
         <form action="/api/logout" method="post" className="mt-2">

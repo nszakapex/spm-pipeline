@@ -53,8 +53,8 @@ export const brandTokens = {
   radius: {
     base: "1.25rem",
     pill: "9999px",
-    card: "1.25rem",
-    panel: "1.25rem",
+    card: "8px",
+    panel: "8px",
   },
   shadow: {
     soft: "0 18px 50px -46px rgba(7, 22, 74, 0.28)",
