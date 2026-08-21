@@ -77,6 +77,7 @@ Use a **protected Preview** (Vercel Authentication / Standard Protection) before
 ## Docs
 
 - [Architecture](./docs/architecture.md)
+- [Integrations by stage](./docs/integrations-by-stage.md)
 - [Brand audit](./docs/brand-audit.md)
 - [Data model](./docs/data-model.md)
 - [Scoring](./docs/scoring.md)

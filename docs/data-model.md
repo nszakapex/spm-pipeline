@@ -27,7 +27,10 @@ Explainability and score history.
 Timeline events (captured, call, reply, sync_event, …).
 
 ### integration_sync_events
-HubSpot sync attempts and failures.
+HubSpot (and other channel) sync attempts and failures.
+
+### ingest_receipts (runtime overlay)
+Signed webhook results: channel, canonical event, stage before/after, flags raised. Process-local in the demo.
 
 ## Stage vs disposition
 

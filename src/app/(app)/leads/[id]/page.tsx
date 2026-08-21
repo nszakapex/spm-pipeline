@@ -220,6 +220,17 @@ export default async function LeadDetailPage({
                     {a.body_summary}
                   </p>
                 ) : null}
+                {typeof a.metadata_json.intent === "string" ? (
+                  <p className="text-xs text-[var(--spm-text-muted)]">
+                    Intent: {a.metadata_json.intent.replace(/_/g, " ")}
+                  </p>
+                ) : null}
+                {typeof a.metadata_json.recommendedNextAction === "string" ? (
+                  <p className="text-xs text-[var(--spm-text-muted)]">
+                    Recommended:{" "}
+                    {String(a.metadata_json.recommendedNextAction).replace(/_/g, " ")}
+                  </p>
+                ) : null}
               </li>
             ))}
           </ol>

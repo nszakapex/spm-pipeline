@@ -107,7 +107,8 @@ export type ActivityType =
   | "meeting_held"
   | "no_show"
   | "followup_scheduled"
-  | "sync_event";
+  | "sync_event"
+  | "call_analyzed";
 
 export type ActivityDirection = "inbound" | "outbound" | "system" | "internal";
 
@@ -243,9 +244,43 @@ export interface Activity {
   created_at: string;
 }
 
+export type IntegrationProvider =
+  | "hubspot"
+  | "calendar"
+  | "calls"
+  | "messaging"
+  | "sources";
+
+export type IngestChannel = IntegrationProvider;
+
+export type CanonicalIngestEventType =
+  | "contact.created"
+  | "contact.updated"
+  | "contact.owner_changed"
+  | "deal.stage_changed"
+  | "form.submitted"
+  | "source.captured"
+  | "meeting.booked"
+  | "meeting.rescheduled"
+  | "meeting.canceled"
+  | "meeting.held"
+  | "meeting.no_show"
+  | "call.logged"
+  | "call.analyzed"
+  | "message.inbound"
+  | "message.outbound"
+  | "lead.jake_ready";
+
+export type IngestReceiptStatus =
+  | "applied"
+  | "duplicate"
+  | "unmatched"
+  | "rejected"
+  | "ignored";
+
 export interface IntegrationSyncEvent {
   id: string;
-  provider: "hubspot";
+  provider: IntegrationProvider;
   object_type: string;
   object_id: string | null;
   direction: "inbound" | "outbound";
@@ -255,6 +290,20 @@ export interface IntegrationSyncEvent {
   completed_at: string | null;
   lead_id: string | null;
   source_event_id: string | null;
+}
+
+export interface IngestReceipt {
+  id: string;
+  channel: IngestChannel;
+  event_type: CanonicalIngestEventType | "unknown";
+  external_event_id: string;
+  status: IngestReceiptStatus;
+  lead_id: string | null;
+  stage_before: LeadStage | null;
+  stage_after: LeadStage | null;
+  flags_raised: string[];
+  summary: string;
+  received_at: string;
 }
 
 export interface SlaConfig {

@@ -25,30 +25,36 @@ Demo auth is isolated in `src/lib/auth/*` and must never become an insecure prod
 
 ## Route protection
 
-- `src/proxy.ts` — Next.js 16 Proxy (replaces deprecated Middleware). Optimistic redirects after **HMAC verification** of the demo cookie. Does not treat cookie presence or `sb-*` cookies as authentication.
+- `src/proxy.ts` — Next.js 16 Proxy (replaces deprecated Middleware). Optimistic redirects after **HMAC verification** of the demo cookie. Does not treat cookie presence or `sb-*` cookies as authentication. `/api/webhooks/*` is public; webhook auth is a separate HMAC.
 - `src/app/(app)/layout.tsx` — **authorization boundary** via `getSessionUser()`.
 - Valid users visiting `/login` are redirected by the login page after verified session lookup (avoids invalid-cookie redirect loops).
 
 ## Data access
 
 - SQL migrations in `supabase/migrations` (no ORM) — reference schema only for a future pilot.
-- Runtime `getStore()` always serves the in-memory seeded dataset. No Supabase, SQL, or network data plane in demo mode.
+- Runtime `getStore()` serves the in-memory seeded dataset plus a process-local overlay for signed webhook ingest. No Supabase, SQL, or network data plane in demo mode.
 - Types live in `src/types/domain.ts`.
 
 ## Integration boundary
 
 ```text
 UI / server pages
-  → domain libs (scoring, nurture flags, reconciliation, analytics)
+  → domain libs (scoring, nurture flags, reconciliation, analytics, stage ingest)
   → integrations/hubspot/* (mock client — no HTTP)
+  → integrations/webhooks/* (signed mock ingest)
 ```
 
-UI never calls HubSpot directly. Demo runtime does not contact Supabase or HubSpot.
+UI never calls HubSpot, Jake's calendar, or a dialer directly. Demo runtime does not contact Supabase or HubSpot.
+
+Inbound events use pre-registered routes under `/api/webhooks/*` (HMAC `spm-v1`). See [Integrations by stage](./integrations-by-stage.md).
 
 ## Key domain modules
 
 - `src/lib/scoring/score-lead.ts` — deterministic scoring
 - `src/lib/nurture/flags.ts` — SLA / at-risk rules
 - `src/lib/integrity/reconciliation.ts` — source integrity + pipeline health
-- `src/integrations/hubspot/*` — mock adapter
+- `src/lib/pipeline/stage-integrations.ts` — stage × HubSpot / calendar / calls / replies
+- `src/lib/pipeline/apply-ingest.ts` — webhook → stage / next action / score
+- `src/integrations/hubspot/*` — mock adapter + webhook mapper
+- `src/integrations/webhooks/*` — signature, parse, ingest
 - `src/lib/auth/demo-token.ts` — HMAC demo session tokens

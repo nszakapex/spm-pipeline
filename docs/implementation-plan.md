@@ -124,7 +124,11 @@ Proposed layout after foundation (not created until approval):
 │   │   │   ├── integrations/page.tsx
 │   │   │   └── settings/page.tsx
 │   │   ├── api/
-│   │   │   ├── webhooks/hubspot/route.ts   # stubbed; live later
+│   │   │   ├── webhooks/hubspot/route.ts
+│   │   │   ├── webhooks/calendar/route.ts
+│   │   │   ├── webhooks/calls/route.ts
+│   │   │   ├── webhooks/messaging/route.ts
+│   │   │   ├── webhooks/sources/[channel]/route.ts
 │   │   │   └── health/route.ts
 │   │   ├── layout.tsx
 │   │   └── globals.css
@@ -166,13 +170,18 @@ Proposed layout after foundation (not created until approval):
 │   │       ├── seed.ts
 │   │       └── sample-leads.ts
 │   ├── integrations/
-│   │   └── hubspot/
-│   │       ├── client.ts
-│   │       ├── types.ts
-│   │       ├── mock.ts
-│   │       ├── sync.ts
-│   │       ├── mapper.ts
-│   │       └── webhooks.ts             # future
+│   │   ├── hubspot/
+│   │   │   ├── client.ts
+│   │   │   ├── types.ts
+│   │   │   ├── mock.ts
+│   │   │   ├── sync.ts
+│   │   │   ├── mapper.ts
+│   │   │   └── webhooks.ts
+│   │   └── webhooks/
+│   │       ├── signature.ts
+│   │       ├── parse.ts
+│   │       ├── ingest.ts
+│   │       └── http.ts
 │   └── types/
 ├── supabase/
 │   ├── migrations/
@@ -370,7 +379,7 @@ src/integrations/hubspot/
   mock.ts      # deterministic fixture graph
   sync.ts      # pull/push orchestration
   mapper.ts    # HubSpot ↔ canonical lead
-  webhooks.ts  # future inbound events
+  webhooks.ts  # inbound HubSpot events → canonical ingest
 ```
 
 ### Modes
@@ -387,14 +396,18 @@ Prototype ships **mock only**. Do not request HubSpot private app tokens.
 1. **HubSpot → SPM Pipeline** (primary): contacts, lifecycle/deal stage, meeting outcomes, owner, notes timestamps.
 2. **SPM → HubSpot (approved fields only)**: stage changes, next-action notes, qualification flags, score band (if desired), activity summaries.
 
-### Webhooks (planned, not built in early prototype)
+### Webhooks (pre-registered in mock)
+
+Signed stub routes exist now. Live HubSpot subscription create and HubSpot v3 signatures are not enabled.
 
 - Contact creation/property change
 - Deal stage change
-- Meeting booked / no-show
-- Form submission association
+- Meeting booked / held / no-show / canceled (Jake’s HubSpot Meetings calendar)
+- Form / Meta source submissions
+- Sales call logged / analyzed
+- Lead email/SMS replies
 
-Webhook receiver authenticates signatures, writes `integration_events`, upserts leads, recomputes integrity flags. Polling remains fallback.
+Webhook receiver authenticates `spm-v1` HMAC signatures, writes ingest receipts + `integration_sync_events`, upserts the in-memory lead overlay, and recomputes score/flags. Polling remains the live fallback later. See `docs/integrations-by-stage.md`.
 
 ### Mapper philosophy
 
@@ -963,7 +976,7 @@ Must learn from SPM before any **live** integration:
 - Advanced role admin UI
 - Auto-merge duplicates
 - AI scoring / AI email drafts
-- Full webhook infrastructure hardening
+- Full webhook infrastructure hardening (beyond signed mock ingest)
 - Real SPM credentials or real customer imports
 - Multi-workspace / agency SaaS features
 

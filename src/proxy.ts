@@ -5,6 +5,9 @@ import { getEnv } from "@/lib/env";
 const PUBLIC_PATHS = ["/login", "/api/health", "/api/logout"];
 
 function isPublicPath(pathname: string): boolean {
+  if (pathname === "/api/webhooks" || pathname.startsWith("/api/webhooks/")) {
+    return true;
+  }
   return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 

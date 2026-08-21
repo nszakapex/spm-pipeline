@@ -31,7 +31,7 @@ Open http://localhost:3000 and sign in as **Max Sussman** (Sales), **Mack Ianni*
 3. **Pipeline Control identifies action** — **Dashboard** Needs Attention + Priority Leads.
 4. **Scoring prioritizes humans** — open Sarah Thompson (`/leads/lead_001`); walk **Why this score?**
 5. **Nurture prevents “not now” from becoming lost** — **Nurture** queues.
-6. **Jake-ready creates a clean handoff** — filter Jake Ready / pipeline column.
+6. **Jake-ready creates a clean handoff** — filter Jake Ready / pipeline column. **Integrations** shows HubSpot + Jake's HubSpot Meetings calendar by stage.
 7. **Funnel analytics show what converts** — **Analytics** source comparison.
 
 ## Auth notes
@@ -61,5 +61,6 @@ Proposed project settings:
 
 - Subtle shell disclosure: **Demo · synthetic data · HubSpot mock**
 - Call / Email / Text / Book actions are mocked UI affordances — no live outreach
+- Signed `/api/webhooks/*` routes are pre-registered in mock (see [Integrations by stage](./integrations-by-stage.md))
 - Do not claim records are real SPM customers
 - Do not enable live HubSpot or Supabase without a new explicit approval

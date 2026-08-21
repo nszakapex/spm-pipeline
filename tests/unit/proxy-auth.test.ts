@@ -64,6 +64,12 @@ describe("proxy route protection", () => {
     const res = proxy(req("/api/logout"));
     expect(res.status).toBe(200);
   });
+
+  it("keeps signed webhook routes public (auth is HMAC, not the demo cookie)", () => {
+    const res = proxy(req("/api/webhooks/calendar"));
+    expect(res.status).toBe(200);
+    expect(res.headers.get("location")).toBeNull();
+  });
 });
 
 describe("secure cookie policy", () => {
