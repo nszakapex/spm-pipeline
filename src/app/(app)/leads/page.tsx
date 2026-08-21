@@ -6,8 +6,10 @@ import {
   DISPOSITION_LABELS,
   SCORE_BAND_LABELS,
   STAGE_LABELS,
+  formatNextAction,
   type Lead,
 } from "@/types/domain";
+import { formatOpsDate } from "@/lib/utils";
 import type { RiskFlagCode as FlagCode } from "@/lib/nurture/flags";
 
 export const metadata = { title: "Leads" };
@@ -83,11 +85,11 @@ export default async function LeadsPage({
             name="q"
             defaultValue={params.q ?? ""}
             placeholder="Search name, email, phone"
-            className="h-11 flex-1 rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-blue-secondary)]/35"
+            className="h-11 flex-1 rounded-md border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-blue-secondary)]/35"
           />
           <button
             type="submit"
-            className="h-11 rounded-full bg-[var(--spm-blue-primary)] px-5 text-sm font-bold text-white"
+            className="h-11 rounded-md bg-[var(--spm-blue-primary)] px-5 text-sm font-semibold text-white"
           >
             Search
           </button>
@@ -189,11 +191,9 @@ export default async function LeadsPage({
                     </div>
                   </td>
                   <td className="px-4 py-3 text-[var(--spm-text-muted)]">
-                    {lead.next_action_type ?? "—"}
+                    {formatNextAction(lead.next_action_type)}
                     {lead.next_action_at ? (
-                      <p className="text-xs">
-                        {new Date(lead.next_action_at).toLocaleString()}
-                      </p>
+                      <p className="text-xs">{formatOpsDate(lead.next_action_at)}</p>
                     ) : null}
                   </td>
                   <td className="px-4 py-3">
@@ -248,8 +248,8 @@ export default async function LeadsPage({
                   ))}
                 </div>
                 <p className="mt-3 text-sm text-[var(--spm-text-muted)]">
-                  Next: {lead.next_action_type ?? "None"}{" "}
-                  {lead.next_action_note ? `· ${lead.next_action_note}` : ""}
+                  Next: {formatNextAction(lead.next_action_type)}
+                  {lead.next_action_note ? ` · ${lead.next_action_note}` : ""}
                 </p>
               </Link>
             </li>

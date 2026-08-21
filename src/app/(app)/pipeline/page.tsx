@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getLeadFlags } from "@/lib/analytics/queries";
 import { getStore } from "@/lib/db/store";
-import { OPEN_STAGES, STAGE_LABELS, type LeadStage } from "@/types/domain";
+import { OPEN_STAGES, STAGE_LABELS, DISPOSITION_LABELS, formatNextAction, type LeadStage } from "@/types/domain";
 
 export const metadata = { title: "Pipeline" };
 
@@ -107,7 +107,7 @@ function LeadCard({ leadId }: { leadId: string }) {
   const owner = lead.owner_id ? getStore().getUser(lead.owner_id) : undefined;
   const flags = getLeadFlags(lead);
   return (
-    <Link href={`/leads/${lead.id}`} className="block rounded-[1rem] border border-[rgba(7,22,74,0.08)] bg-white p-3 shadow-sm transition hover:-translate-y-0.5">
+    <Link href={`/leads/${lead.id}`} className="block rounded-md border border-[rgba(7,22,74,0.08)] bg-white p-3 hover:bg-[#f7f9ff]">
       <div className="flex items-start justify-between gap-2">
         <p className="font-semibold tracking-[-0.02em] text-[var(--spm-navy)]">
           {lead.first_name} {lead.last_name}
@@ -119,15 +119,15 @@ function LeadCard({ leadId }: { leadId: string }) {
         {owner?.name ?? "Unassigned"}
       </p>
       <div className="mt-2 flex flex-wrap gap-1">
-        <Badge tone="neutral">{lead.disposition}</Badge>
+        <Badge tone="neutral">{DISPOSITION_LABELS[lead.disposition]}</Badge>
         {flags.slice(0, 1).map((f) => (
           <Badge key={f.code} tone="danger">
             {f.label}
           </Badge>
         ))}
       </div>
-      <p className="mt-2 text-xs font-semibold text-[var(--spm-blue-secondary)]">
-        {lead.next_action_type ?? "No next action"}
+      <p className="mt-2 text-xs font-medium text-[var(--spm-navy)]">
+        {formatNextAction(lead.next_action_type)}
       </p>
     </Link>
   );

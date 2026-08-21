@@ -306,6 +306,25 @@ export const SCORE_BAND_LABELS: Record<ScoreBand, string> = {
   P4: "P4 / Low",
 };
 
+export const NEXT_ACTION_LABELS: Record<NextActionType, string> = {
+  CALL_NOW: "Call now",
+  CALL: "Call",
+  EMAIL: "Email",
+  TEXT: "Text",
+  FOLLOW_UP: "Follow up",
+  RESCHEDULE: "Reschedule",
+  QUALIFY: "Qualify",
+  HANDOFF: "Handoff",
+  BOOK_MEETING: "Book meeting",
+  REVIEW: "Review",
+  OTHER: "Other",
+};
+
+export function formatNextAction(type: NextActionType | null | undefined): string {
+  if (!type) return "No next step";
+  return NEXT_ACTION_LABELS[type];
+}
+
 export const DEFAULT_SLA: SlaConfig = {
   firstContactHours: 4,
   reconciliationHours: 24,

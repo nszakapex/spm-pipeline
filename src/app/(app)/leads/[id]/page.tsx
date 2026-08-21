@@ -14,7 +14,9 @@ import {
   DISPOSITION_LABELS,
   SCORE_BAND_LABELS,
   STAGE_LABELS,
+  formatNextAction,
 } from "@/types/domain";
+import { formatOpsDate } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -134,7 +136,7 @@ export default async function LeadDetailPage({
       </header>
 
       <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-        <Panel className="border-[rgba(28,72,230,0.18)] bg-gradient-to-br from-white to-[#eef5ff]">
+        <Panel>
           <PanelHeader>
             <div>
               <PanelTitle>Next Action</PanelTitle>
@@ -144,15 +146,15 @@ export default async function LeadDetailPage({
             </div>
           </PanelHeader>
           <div className="px-5 pb-5">
-            <p className="text-2xl font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
-              {lead.next_action_type ?? "No next action"}
+            <p className="text-2xl font-semibold text-[var(--spm-navy)]">
+              {formatNextAction(lead.next_action_type)}
             </p>
             <p className="mt-2 text-sm text-[var(--spm-text-muted)]">
               {lead.next_action_note ?? "Schedule a follow-up to keep this lead visible."}
             </p>
             {lead.next_action_at ? (
               <p className="mt-3 text-sm font-semibold text-[var(--spm-blue-secondary)]">
-                Due {new Date(lead.next_action_at).toLocaleString()}
+                Due {formatOpsDate(lead.next_action_at)}
               </p>
             ) : (
               <p className="mt-3 text-sm font-semibold text-[var(--spm-danger)]">

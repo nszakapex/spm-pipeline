@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/panel";
 import { getDashboardMetrics } from "@/lib/analytics/queries";
 import { formatPercent } from "@/lib/utils";
-import { SCORE_BAND_LABELS } from "@/types/domain";
+import { SCORE_BAND_LABELS, formatNextAction } from "@/types/domain";
 
 export const metadata = { title: "Dashboard" };
 
@@ -208,7 +208,9 @@ export default function DashboardPage() {
                       {f.label}
                     </Badge>
                   ))}
-                  <Badge tone="neutral">{lead.next_action_type ?? "No action"}</Badge>
+                  <span className="text-sm font-medium text-[var(--spm-navy)]">
+                    {formatNextAction(lead.next_action_type)}
+                  </span>
                 </div>
               </Link>
             </li>

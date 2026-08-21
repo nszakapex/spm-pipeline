@@ -20,13 +20,9 @@ export default async function LoginPage() {
   const demo = isDemoMode();
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-4 py-10">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-[rgba(79,157,255,0.2)] blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-[rgba(232,189,54,0.18)] blur-3xl" />
-      </div>
+    <div className="flex min-h-screen items-center justify-center px-4 py-10">
 
-      <Panel className="relative w-full max-w-md animate-fade-up p-7 sm:p-8">
+      <Panel className="w-full max-w-md p-7 sm:p-8">
         <div className="flex flex-col items-start gap-5">
           <BrandBanner />
           <div>

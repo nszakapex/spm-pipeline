@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/panel";
 import { filterLeadsByFlag, getLeadFlags } from "@/lib/analytics/queries";
 import { getStore } from "@/lib/db/store";
-import { SCORE_BAND_LABELS, type Lead } from "@/types/domain";
+import { SCORE_BAND_LABELS, formatNextAction, type Lead } from "@/types/domain";
+import { formatOpsDate } from "@/lib/utils";
 
 export const metadata = { title: "Nurture" };
 
@@ -89,7 +90,7 @@ export default function NurturePage() {
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-[var(--spm-text-muted)]">
           Daily working queue — why each lead is here, last touch, and the
-          recommended next action.
+          next step.
         </p>
       </header>
 
@@ -137,14 +138,13 @@ export default function NurturePage() {
                           {item.why}
                         </p>
                         <p className="mt-1 text-xs text-[var(--spm-text-muted)]">
-                          Last touch{" "}
-                          {new Date(item.lastTouch).toLocaleString()}
-                          {item.due
-                            ? ` · Due ${new Date(item.due).toLocaleString()}`
-                            : ""}
+                          Last touch {formatOpsDate(item.lastTouch)}
+                          {item.due ? ` · Due ${formatOpsDate(item.due)}` : ""}
                         </p>
                       </div>
-                      <Badge tone="info">{item.action}</Badge>
+                      <p className="text-sm font-medium text-[var(--spm-navy)]">
+                        {formatNextAction(item.action)}
+                      </p>
                     </Link>
                   </li>
                 );

@@ -47,10 +47,7 @@ body {
 }
 
 body {
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(79, 157, 255, 0.16), transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, rgba(232, 189, 54, 0.12), transparent 45%),
-    var(--spm-app-bg);
+  background: var(--spm-app-bg);
   color: var(--spm-navy);
   font-family: Inter, "Avenir Next", ui-sans-serif, system-ui, sans-serif;
 }

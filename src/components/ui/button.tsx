@@ -8,19 +8,19 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "rounded-full bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] text-white shadow-[0_10px_22px_rgba(28,72,230,0.18)] hover:-translate-y-px active:scale-[0.985]",
+          "rounded-md bg-[var(--spm-blue-primary)] text-white hover:bg-[var(--spm-blue-secondary)]",
         secondary:
-          "rounded-full border border-[rgba(7,22,74,0.12)] bg-white text-[var(--spm-navy)] hover:border-[rgba(7,22,74,0.2)] hover:bg-[#f7f9ff]",
+          "rounded-md border border-[rgba(7,22,74,0.12)] bg-white text-[var(--spm-navy)] hover:bg-[#f7f9ff]",
         ghost:
-          "rounded-full text-[var(--spm-navy)]/80 hover:bg-[rgba(7,22,74,0.05)]",
+          "rounded-md text-[var(--spm-navy)]/80 hover:bg-[rgba(7,22,74,0.05)]",
         danger:
-          "rounded-full bg-[var(--spm-danger)] text-white hover:opacity-95",
+          "rounded-md bg-[var(--spm-danger)] text-white hover:opacity-95",
       },
       size: {
         sm: "h-9 px-3.5 text-sm",
         md: "h-11 px-5 text-sm",
         lg: "h-12 px-7 text-[0.95rem]",
-        icon: "size-10 rounded-full",
+        icon: "size-10 rounded-md",
       },
     },
     defaultVariants: {
