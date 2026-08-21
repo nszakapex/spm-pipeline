@@ -21,7 +21,7 @@ export default async function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--spm-app-bg)] px-4 py-10">
-      <Panel className="w-full max-w-md p-6 sm:p-7">
+      <Panel className="spm-panel-accent w-full max-w-md p-6 sm:p-7">
         <div className="flex flex-col items-start gap-5">
           <BrandBanner />
           <div>
@@ -61,7 +61,7 @@ export default async function LoginPage() {
             </div>
           )}
         </div>
-        <div className="mt-6 flex items-center gap-3 border-t border-[rgba(7,22,74,0.08)] pt-4">
+        <div className="mt-6 flex items-center gap-3 border-t-2 border-[var(--spm-sand)] pt-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={brandTokens.assets.logoMark}

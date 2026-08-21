@@ -156,7 +156,7 @@ export default async function LeadDetailPage({
                 Due {formatOpsDate(lead.next_action_at)}
               </p>
             ) : (
-              <p className="mt-3 text-sm font-medium text-[var(--spm-danger)]">
+              <p className="mt-3 text-sm font-medium text-[var(--spm-navy)]">
                 Missing next action timestamp
               </p>
             )}
@@ -188,8 +188,8 @@ export default async function LeadDetailPage({
                 <span
                   className={`font-medium ${
                     f.points >= 0
-                      ? "text-[var(--spm-success)]"
-                      : "text-[var(--spm-danger)]"
+                      ? "text-[var(--spm-blue-primary)]"
+                      : "text-[var(--spm-navy)]"
                   }`}
                 >
                   {f.points > 0 ? `+${f.points}` : f.points}
@@ -210,7 +210,7 @@ export default async function LeadDetailPage({
           </PanelHeader>
           <ol className="space-y-3 px-5 pb-5">
             {activities.map((a) => (
-              <li key={a.id} className="relative border-l-2 border-[#dbe7f7] pl-4">
+              <li key={a.id} className="relative border-l-2 border-[var(--spm-gold)] pl-4">
                 <p className="text-xs text-[var(--spm-text-muted)]">
                   {formatOpsDate(a.occurred_at)}
                 </p>

@@ -118,11 +118,11 @@ export default async function LeadsPage({
             name="q"
             defaultValue={params.q ?? ""}
             placeholder="Search name, email, phone"
-            className="h-10 flex-1 rounded-md border border-[rgba(7,22,74,0.12)] bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-blue-secondary)]/35"
+            className="h-10 flex-1 border-2 border-[var(--spm-navy)] bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-sky)]"
           />
           <button
             type="submit"
-            className="h-10 rounded-md bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] px-4 text-sm font-medium text-white"
+            className="h-10 bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] px-4 text-sm font-medium text-white"
           >
             Search
           </button>
@@ -189,7 +189,7 @@ export default async function LeadsPage({
                       {SCORE_BAND_LABELS[lead.score_band]} · {lead.score}
                     </Badge>
                     {flags[0] ? (
-                      <p className="mt-1 text-[11px] text-[var(--spm-danger)]">
+                      <p className="mt-1 text-[11px] text-[var(--spm-navy)]">
                         {flags[0].label}
                       </p>
                     ) : null}
@@ -197,7 +197,7 @@ export default async function LeadsPage({
                   <td className="text-[var(--spm-text-muted)]">{lead.source}</td>
                   <td>
                     {owner?.name ?? (
-                      <span className="font-medium text-[var(--spm-danger)]">
+                      <span className="font-medium text-[var(--spm-navy)]">
                         Unassigned
                       </span>
                     )}

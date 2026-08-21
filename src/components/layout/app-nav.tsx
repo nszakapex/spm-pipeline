@@ -44,7 +44,7 @@ export function AppSidebar({
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-[220px] shrink-0 flex-col border-r border-[rgba(7,22,74,0.12)] bg-white px-3 py-4 md:flex">
+    <aside className="hidden w-[220px] shrink-0 flex-col border-r-2 border-[var(--spm-navy)] bg-[var(--spm-cream)] px-3 py-4 md:flex">
       <BrandMark className="px-2" />
       <nav className="mt-6 flex flex-1 flex-col gap-0.5">
         {NAV.map((item) => {
@@ -56,10 +56,10 @@ export function AppSidebar({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium",
+                "flex items-center gap-2.5 border-l-4 px-2.5 py-2 text-[13px] font-medium",
                 active
-                  ? "bg-[#edf3ff] text-[var(--spm-blue-secondary)]"
-                  : "text-[var(--spm-navy)]/75 hover:bg-[rgba(7,22,74,0.04)] hover:text-[var(--spm-navy)]",
+                  ? "border-[var(--spm-gold)] bg-[color-mix(in_oklab,var(--spm-sky)_18%,white)] text-[var(--spm-blue-primary)]"
+                  : "border-transparent text-[var(--spm-navy)]/80 hover:bg-[var(--spm-sand)] hover:text-[var(--spm-navy)]",
               )}
             >
               <Icon className="size-4 shrink-0" />
@@ -68,7 +68,7 @@ export function AppSidebar({
           );
         })}
       </nav>
-      <div className="mt-4 border-t border-[rgba(7,22,74,0.12)] px-2 pt-3">
+      <div className="mt-4 border-t-2 border-[var(--spm-navy)] px-2 pt-3">
         <p className="text-sm font-medium text-[var(--spm-navy)]">{userName}</p>
         <p className="truncate text-xs text-[var(--spm-text-muted)]">{userEmail}</p>
         <form action="/api/logout" method="post" className="mt-2">
@@ -87,7 +87,7 @@ export function AppSidebar({
 export function MobileBottomNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[rgba(7,22,74,0.12)] bg-white px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-[var(--spm-navy)] bg-[var(--spm-cream)] px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 md:hidden">
       <ul className="grid grid-cols-5 gap-1">
         {MOBILE_PRIMARY.map((item) => {
           const active =
@@ -98,7 +98,7 @@ export function MobileBottomNav() {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-md text-[11px] font-medium",
+                  "flex min-h-12 flex-col items-center justify-center gap-0.5 text-[11px] font-medium",
                   active
                     ? "text-[var(--spm-blue-primary)]"
                     : "text-[var(--spm-text-muted)]",
@@ -117,7 +117,7 @@ export function MobileBottomNav() {
 
 export function MobileTopBar({ title }: { title?: string }) {
   return (
-    <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-[rgba(7,22,74,0.12)] bg-white px-4 py-2.5 md:hidden">
+    <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b-2 border-[var(--spm-navy)] bg-[var(--spm-cream)] px-4 py-2.5 md:hidden">
       <BrandMark />
       {title ? (
         <span className="text-sm font-semibold text-[var(--spm-navy)]">{title}</span>
@@ -125,7 +125,7 @@ export function MobileTopBar({ title }: { title?: string }) {
       <div className="flex items-center gap-1">
         <Link
           href="/settings"
-          className="grid size-9 place-items-center rounded-md text-[var(--spm-navy)]/70"
+          className="grid size-9 place-items-center text-[var(--spm-navy)]/70"
           aria-label="Settings"
         >
           <Settings className="size-5" />

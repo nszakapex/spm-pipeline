@@ -35,7 +35,7 @@ export default function SettingsPage() {
           <form action="/api/logout" method="post">
             <button
               type="submit"
-              className="inline-flex h-10 items-center justify-center rounded-md border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm font-medium text-[var(--spm-navy)] hover:bg-[#f7f9ff]"
+              className="inline-flex h-10 items-center justify-center border-2 border-[var(--spm-navy)] bg-white px-4 text-sm font-medium text-[var(--spm-navy)] hover:bg-[var(--spm-cream)]"
             >
               Sign out
             </button>

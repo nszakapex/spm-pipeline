@@ -48,8 +48,8 @@ export default async function SourcesPage({
       </header>
 
       {selected && selected.missingCount > 0 ? (
-        <div className="rounded-md border border-[rgba(194,59,74,0.25)] bg-[#fff6f7] px-4 py-3">
-          <p className="text-sm font-medium text-[var(--spm-danger)]">
+        <div className="spm-flag px-4 py-3">
+          <p className="text-sm font-medium text-[var(--spm-navy)]">
             {selected.sourceName}: {selected.submissionsReceived} submissions ·{" "}
             {selected.accountedFor} accounted · {selected.missingCount}{" "}
             potentially missing
@@ -85,7 +85,7 @@ export default async function SourcesPage({
                   <tr
                     key={s.sourceDefinitionId}
                     aria-selected={active}
-                    className={active ? "bg-[#edf3ff]" : undefined}
+                    className={active ? "bg-[color-mix(in_oklab,var(--spm-sky)_18%,white)]" : undefined}
                   >
                     <td>
                       <Link
@@ -98,7 +98,7 @@ export default async function SourcesPage({
                         {s.category.replaceAll("_", " ")}
                       </p>
                       {s.missingCount > 0 ? (
-                        <p className="mt-1 text-xs font-medium text-[var(--spm-danger)]">
+                        <p className="mt-1 text-xs font-medium text-[var(--spm-navy)]">
                           {s.missingCount} potentially missing
                         </p>
                       ) : null}

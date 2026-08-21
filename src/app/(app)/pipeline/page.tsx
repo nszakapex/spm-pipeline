@@ -101,7 +101,7 @@ function LeadCard({ leadId }: { leadId: string }) {
   const owner = lead.owner_id ? getStore().getUser(lead.owner_id) : undefined;
   const flags = getLeadFlags(lead);
   return (
-    <Link href={`/leads/${lead.id}`} className="block rounded-md border border-[rgba(7,22,74,0.08)] bg-white p-3 hover:bg-[#f7f9ff]">
+    <Link href={`/leads/${lead.id}`} className="spm-panel block p-3 hover:bg-[var(--spm-cream)]">
       <div className="flex items-start justify-between gap-2">
         <p className="font-medium text-[var(--spm-navy)]">
           {lead.first_name} {lead.last_name}

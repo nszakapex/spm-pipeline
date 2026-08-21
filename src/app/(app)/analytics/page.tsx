@@ -81,9 +81,9 @@ export default function AnalyticsPage() {
                     {step.label}
                   </td>
                   <td className="w-full min-w-[8rem]">
-                    <div className="h-2 overflow-hidden rounded-sm bg-[#e8eef8]">
+                    <div className="h-2 overflow-hidden bg-[var(--spm-sand)]">
                       <div
-                        className="h-full rounded-sm bg-gradient-to-r from-[var(--spm-sky)] to-[var(--spm-blue-primary)]"
+                        className="h-full bg-gradient-to-r from-[var(--spm-sky)] to-[var(--spm-blue-primary)]"
                         style={{ width: `${(step.count / max) * 100}%` }}
                       />
                     </div>

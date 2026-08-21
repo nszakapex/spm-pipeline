@@ -36,28 +36,29 @@ export const brandTokens = {
     /** Confirmed: soft photo frame */
     sand: "#e8e1d7",
     white: "#ffffff",
-    /** Application surface — approximation derived from marketing soft blues */
-    appBackground: "#f4f7fc",
+    /** Confirmed cream — used as the ops canvas */
+    appBackground: "#faf6ee",
     surface: "#ffffff",
-    border: "rgba(7, 22, 74, 0.10)",
-    borderStrong: "rgba(7, 22, 74, 0.16)",
-    success: "#0C7F79",
-    warning: "#b8901f",
-    danger: "#c23b4a",
+    border: "#07164A",
+    borderStrong: "#07164A",
+    /** Semantic remap: issues use gold, not traffic-light red */
+    flag: "#e8bd36",
+    /** Semantic remap: healthy / positive use primary blue, not teal */
+    ok: "#1c48e6",
   },
   typography: {
-    /** Confirmed public stack */
+    /** Confirmed: Inter on the public site */
     fontFamily:
       'Inter, "Avenir Next", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    trackingTight: "-0.03em",
-    trackingDisplay: "-0.04em",
+    trackingTight: "0",
+    trackingDisplay: "0",
   },
   radius: {
-    /** Confirmed: --radius */
-    base: "1.25rem",
-    pill: "9999px",
-    card: "1.25rem",
-    panel: "1.75rem",
+    /** Ops chrome is square — marketing site radii are not used here */
+    base: "0px",
+    pill: "0px",
+    card: "0px",
+    panel: "0px",
   },
   shadow: {
     soft: "0 18px 50px -46px rgba(7, 22, 74, 0.28)",

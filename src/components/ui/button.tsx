@@ -3,24 +3,24 @@ import { cn } from "@/lib/utils";
 import type { ButtonHTMLAttributes } from "react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--spm-blue-secondary)]/45 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 rounded-none font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--spm-sky)] disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         primary:
-          "rounded-md bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] text-white hover:opacity-95",
+          "bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] text-white hover:opacity-95",
         secondary:
-          "rounded-md border border-[rgba(7,22,74,0.12)] bg-white text-[var(--spm-navy)] hover:bg-[#f7f9ff]",
+          "border-2 border-[var(--spm-navy)] bg-white text-[var(--spm-navy)] hover:bg-[var(--spm-cream)]",
         ghost:
-          "rounded-md text-[var(--spm-navy)]/80 hover:bg-[rgba(7,22,74,0.05)]",
+          "text-[var(--spm-navy)]/80 hover:bg-[var(--spm-sand)]",
         danger:
-          "rounded-md bg-[var(--spm-danger)] text-white hover:opacity-95",
+          "border-2 border-[var(--spm-navy)] bg-[var(--spm-navy)] text-[var(--spm-cream)] hover:opacity-95",
       },
       size: {
         sm: "h-9 px-3.5 text-sm",
         md: "h-10 px-4 text-sm",
         lg: "h-11 px-5 text-sm",
-        icon: "size-9 rounded-md",
+        icon: "size-9",
       },
     },
     defaultVariants: {
