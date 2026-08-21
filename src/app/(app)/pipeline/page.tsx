@@ -37,14 +37,12 @@ export default async function PipelinePage({
     columns.find((c) => c.stage === mobileStage)?.items ?? [];
 
   return (
-    <div className="space-y-5 animate-fade-up">
+    <div className="space-y-5">
       <header>
-        <h1 className="text-[1.85rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
-          Pipeline
-        </h1>
+        <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">Pipeline</h1>
         <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
-          Primary stages only. Dispositions (nurture, no-show, etc.) appear on
-          cards — not as separate columns.
+          Open stages only. Disposition (nurture, no-show, etc.) is on each
+          card, not a separate column.
         </p>
       </header>
 
@@ -55,10 +53,10 @@ export default async function PipelinePage({
             <Link
               key={c.stage}
               href={`/pipeline?stage=${c.stage}`}
-              className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-bold ${
+              className={`shrink-0 rounded-md border px-3 py-1.5 text-sm ${
                 mobileStage === c.stage
-                  ? "bg-[var(--spm-blue-primary)] text-white"
-                  : "border border-[rgba(7,22,74,0.12)] bg-white text-[var(--spm-navy)]"
+                  ? "border-[var(--spm-navy)] bg-[var(--spm-navy)] text-white"
+                  : "border-[rgba(7,22,74,0.12)] bg-white text-[var(--spm-navy)]"
               }`}
             >
               {STAGE_LABELS[c.stage]} ({c.items.length})
@@ -109,7 +107,7 @@ function LeadCard({ leadId }: { leadId: string }) {
   return (
     <Link href={`/leads/${lead.id}`} className="block rounded-md border border-[rgba(7,22,74,0.08)] bg-white p-3 hover:bg-[#f7f9ff]">
       <div className="flex items-start justify-between gap-2">
-        <p className="font-semibold tracking-[-0.02em] text-[var(--spm-navy)]">
+        <p className="font-medium text-[var(--spm-navy)]">
           {lead.first_name} {lead.last_name}
         </p>
         <Badge tone={lead.score_band === "P1" ? "hot" : "high"}>{lead.score}</Badge>

@@ -68,16 +68,49 @@ export default async function LeadsPage({
   const store = getStore();
   const leads = applyFilters(store.getLeads(), params);
 
+  const filters = [
+    {
+      href: "/leads",
+      label: "All",
+      active:
+        !params.band &&
+        !params.stage &&
+        !params.risk &&
+        !params.due &&
+        params.jake !== "1",
+    },
+    { href: "/leads?band=P1", label: "Hot", active: params.band === "P1" },
+    {
+      href: "/leads?stage=JAKE_READY",
+      label: "Jake-ready",
+      active: params.stage === "JAKE_READY" || params.jake === "1",
+    },
+    {
+      href: "/leads?risk=no_owner",
+      label: "No owner",
+      active: params.risk === "no_owner",
+    },
+    {
+      href: "/leads?risk=follow_up_overdue",
+      label: "Overdue",
+      active: params.risk === "follow_up_overdue",
+    },
+    {
+      href: "/leads?risk=needs_reply",
+      label: "Needs reply",
+      active: params.risk === "needs_reply",
+    },
+    { href: "/leads?due=1", label: "Action due", active: params.due === "1" },
+  ];
+
   return (
-    <div className="space-y-5 animate-fade-up">
+    <div className="space-y-5">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-[1.85rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
-            Leads
-          </h1>
+          <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">Leads</h1>
           <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
             {leads.length} records
-            {params.risk ? ` · risk: ${params.risk}` : ""}
+            {params.risk ? ` · ${params.risk.replaceAll("_", " ")}` : ""}
           </p>
         </div>
         <form className="flex w-full max-w-md gap-2">
@@ -85,11 +118,11 @@ export default async function LeadsPage({
             name="q"
             defaultValue={params.q ?? ""}
             placeholder="Search name, email, phone"
-            className="h-11 flex-1 rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-blue-secondary)]/35"
+            className="h-10 flex-1 rounded-md border border-[rgba(7,22,74,0.12)] bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-blue-secondary)]/35"
           />
           <button
             type="submit"
-            className="h-11 rounded-full bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] px-5 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(28,72,230,0.18)]"
+            className="h-10 rounded-md bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] px-4 text-sm font-medium text-white"
           >
             Search
           </button>
@@ -97,19 +130,15 @@ export default async function LeadsPage({
       </header>
 
       <div className="flex gap-2 overflow-x-auto pb-1">
-        {[
-          { href: "/leads", label: "All" },
-          { href: "/leads?band=P1", label: "Hot" },
-          { href: "/leads?stage=JAKE_READY", label: "Jake-ready" },
-          { href: "/leads?risk=no_owner", label: "No owner" },
-          { href: "/leads?risk=follow_up_overdue", label: "Overdue" },
-          { href: "/leads?risk=needs_reply", label: "Needs reply" },
-          { href: "/leads?due=1", label: "Action due" },
-        ].map((f) => (
+        {filters.map((f) => (
           <Link
             key={f.href}
             href={f.href}
-            className="shrink-0 rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-3.5 py-2 text-xs font-bold text-[var(--spm-navy)]"
+            className={`shrink-0 rounded-md border px-3 py-1.5 text-sm ${
+              f.active
+                ? "border-[var(--spm-navy)] bg-[var(--spm-navy)] text-white"
+                : "border-[rgba(7,22,74,0.12)] bg-white text-[var(--spm-navy)]"
+            }`}
           >
             {f.label}
           </Link>
@@ -118,16 +147,16 @@ export default async function LeadsPage({
 
       {/* Desktop table */}
       <div className="spm-panel hidden overflow-hidden md:block">
-        <table className="min-w-full text-left text-sm">
-          <thead className="bg-[#f8fafd] text-xs uppercase tracking-[0.04em] text-[var(--spm-text-muted)]">
+        <table className="spm-table">
+          <thead>
             <tr>
-              <th className="px-4 py-3 font-bold">Lead</th>
-              <th className="px-4 py-3 font-bold">Priority</th>
-              <th className="px-4 py-3 font-bold">Source</th>
-              <th className="px-4 py-3 font-bold">Owner</th>
-              <th className="px-4 py-3 font-bold">Stage</th>
-              <th className="px-4 py-3 font-bold">Next action</th>
-              <th className="px-4 py-3 font-bold">HubSpot</th>
+              <th>Lead</th>
+              <th>Priority</th>
+              <th>Source</th>
+              <th>Owner</th>
+              <th>Stage</th>
+              <th>Next step</th>
+              <th>HubSpot</th>
             </tr>
           </thead>
           <tbody>
@@ -137,14 +166,11 @@ export default async function LeadsPage({
                 : undefined;
               const flags = getLeadFlags(lead);
               return (
-                <tr
-                  key={lead.id}
-                  className="border-t border-[rgba(7,22,74,0.06)] hover:bg-[#f7f9ff]"
-                >
-                  <td className="px-4 py-3">
+                <tr key={lead.id}>
+                  <td>
                     <Link
                       href={`/leads/${lead.id}`}
-                      className="font-semibold text-[var(--spm-navy)] hover:text-[var(--spm-blue-secondary)]"
+                      className="font-medium text-[var(--spm-navy)] hover:underline"
                     >
                       {lead.first_name} {lead.last_name}
                     </Link>
@@ -152,7 +178,7 @@ export default async function LeadsPage({
                       {lead.email}
                     </p>
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <Badge
                       tone={
                         lead.score_band === "P1"
@@ -172,17 +198,15 @@ export default async function LeadsPage({
                       </p>
                     ) : null}
                   </td>
-                  <td className="px-4 py-3 text-[var(--spm-text-muted)]">
-                    {lead.source}
-                  </td>
-                  <td className="px-4 py-3">
+                  <td className="text-[var(--spm-text-muted)]">{lead.source}</td>
+                  <td>
                     {owner?.name ?? (
-                      <span className="font-bold text-[var(--spm-danger)]">
+                      <span className="font-medium text-[var(--spm-danger)]">
                         Unassigned
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <div className="space-y-1">
                       <div>{STAGE_LABELS[lead.stage]}</div>
                       <Badge tone="neutral">
@@ -190,13 +214,13 @@ export default async function LeadsPage({
                       </Badge>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-[var(--spm-text-muted)]">
+                  <td className="text-[var(--spm-text-muted)]">
                     {formatNextAction(lead.next_action_type)}
                     {lead.next_action_at ? (
                       <p className="text-xs">{formatOpsDate(lead.next_action_at)}</p>
                     ) : null}
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <Badge
                       tone={
                         lead.sync_status === "failed"
@@ -225,7 +249,7 @@ export default async function LeadsPage({
               <Link href={`/leads/${lead.id}`} className="spm-panel block p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-[var(--spm-navy)]">
+                    <p className="font-medium text-[var(--spm-navy)]">
                       {lead.first_name} {lead.last_name}
                     </p>
                     <p className="text-xs text-[var(--spm-text-muted)]">

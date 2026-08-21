@@ -14,9 +14,9 @@ export default function SettingsPage() {
   const env = getEnv();
 
   return (
-    <div className="space-y-6 animate-fade-up">
+    <div className="space-y-6">
       <header>
-        <h1 className="text-[1.85rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
+        <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">
           Settings
         </h1>
         <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
@@ -35,7 +35,7 @@ export default function SettingsPage() {
           <form action="/api/logout" method="post">
             <button
               type="submit"
-              className="inline-flex h-11 items-center justify-center rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-5 text-sm font-semibold text-[var(--spm-navy)] hover:bg-[#f7f9ff]"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm font-medium text-[var(--spm-navy)] hover:bg-[#f7f9ff]"
             >
               Sign out
             </button>
@@ -56,22 +56,22 @@ export default function SettingsPage() {
         <dl className="grid gap-3 px-5 pb-5 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-[var(--spm-text-muted)]">App mode</dt>
-            <dd className="font-semibold">{env.APP_MODE}</dd>
+            <dd className="font-medium">{env.APP_MODE}</dd>
           </div>
           <div>
             <dt className="text-[var(--spm-text-muted)]">HubSpot mode</dt>
-            <dd className="font-semibold">{env.HUBSPOT_MODE} (mock only)</dd>
+            <dd className="font-medium">{env.HUBSPOT_MODE} (mock only)</dd>
           </div>
           <div>
             <dt className="text-[var(--spm-text-muted)]">Auth</dt>
-            <dd className="font-semibold">
+            <dd className="font-medium">
               Demo session cookie only. Supabase Auth mode is unavailable in
               this prototype.
             </dd>
           </div>
           <div>
             <dt className="text-[var(--spm-text-muted)]">Scoring version</dt>
-            <dd className="font-semibold">{SCORE_VERSION}</dd>
+            <dd className="font-medium">{SCORE_VERSION}</dd>
           </div>
         </dl>
       </Panel>
@@ -125,11 +125,11 @@ export default function SettingsPage() {
         <dl className="grid gap-3 px-5 pb-5 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-[var(--spm-text-muted)]">First contact SLA</dt>
-            <dd className="font-semibold">{DEFAULT_SLA.firstContactHours} hours</dd>
+            <dd className="font-medium">{DEFAULT_SLA.firstContactHours} hours</dd>
           </div>
           <div>
             <dt className="text-[var(--spm-text-muted)]">Reconciliation threshold</dt>
-            <dd className="font-semibold">
+            <dd className="font-medium">
               {DEFAULT_SLA.reconciliationHours} hours
             </dd>
           </div>

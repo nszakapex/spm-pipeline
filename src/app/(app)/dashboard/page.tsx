@@ -14,208 +14,269 @@ export const metadata = { title: "Dashboard" };
 
 export default function DashboardPage() {
   const m = getDashboardMetrics();
+  const healthIssues = m.health.components.filter((c) => c.violations > 0);
 
-  const healthCards = [
-    { label: "Pipeline Health", value: `${m.pipelineHealth}%`, href: "/settings#pipeline-health" },
-    { label: "New Leads Today", value: String(m.newToday), href: "/leads?scope=today" },
-    { label: "Hot Leads", value: String(m.hot), href: "/leads?band=P1" },
-    { label: "Needs Reply", value: String(m.needsReply), href: "/leads?risk=needs_reply" },
-    { label: "Jake Ready", value: String(m.jakeReady), href: "/leads?stage=JAKE_READY" },
-    { label: "Calls Booked", value: String(m.callsBooked), href: "/leads?stage=CALL_BOOKED" },
-    { label: "Nurture Due Today", value: String(m.nurtureDue), href: "/nurture" },
+  const snapshot = [
+    {
+      label: "Pipeline health",
+      value: `${m.pipelineHealth}%`,
+      href: "/settings#pipeline-health",
+      dest: "Settings",
+    },
+    {
+      label: "New leads today",
+      value: String(m.newToday),
+      href: "/leads?scope=today",
+      dest: "Leads",
+    },
+    {
+      label: "Hot leads",
+      value: String(m.hot),
+      href: "/leads?band=P1",
+      dest: "Leads",
+    },
+    {
+      label: "Needs reply",
+      value: String(m.needsReply),
+      href: "/leads?risk=needs_reply",
+      dest: "Leads",
+    },
+    {
+      label: "Jake ready",
+      value: String(m.jakeReady),
+      href: "/leads?stage=JAKE_READY",
+      dest: "Leads",
+    },
+    {
+      label: "Calls booked",
+      value: String(m.callsBooked),
+      href: "/leads?stage=CALL_BOOKED",
+      dest: "Leads",
+    },
+    {
+      label: "Nurture due today",
+      value: String(m.nurtureDue),
+      href: "/nurture",
+      dest: "Nurture",
+    },
   ];
 
   return (
-    <div className="space-y-6 animate-fade-up">
-      <header className="space-y-2">
-        <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--spm-blue-secondary)]">
-          Control tower
-        </p>
-        <h1 className="text-[1.85rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)] sm:text-[2.1rem]">
-          What needs attention right now?
-        </h1>
-        <p className="max-w-2xl text-sm leading-6 text-[var(--spm-text-muted)]">
-          Pipeline health is {m.pipelineHealth}%. Click any metric to inspect the
-          underlying leads. HubSpot remains the CRM source of truth — this layer
-          makes leads impossible to lose between acquisition and close.
+    <div className="space-y-6">
+      <header>
+        <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">Dashboard</h1>
+        <p className="mt-1 max-w-2xl text-sm text-[var(--spm-text-muted)]">
+          Queue load and assignment gaps. HubSpot stays the CRM; this page shows
+          what still needs a next step.
         </p>
       </header>
 
-      <section>
-        <h2 className="mb-3 text-sm font-bold text-[var(--spm-navy)]">
-          Pipeline Health
-        </h2>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
-          {healthCards.map((card) => (
-            <Link key={card.label} href={card.href} className="spm-panel p-4 transition hover:-translate-y-0.5">
-              <p className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--spm-text-muted)]">
-                {card.label}
-              </p>
-              <p className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
-                {card.value}
-              </p>
-            </Link>
-          ))}
-        </div>
-        <div className="mt-3 spm-panel p-4">
-          <p className="text-sm font-semibold text-[var(--spm-navy)]">
+      <section className="spm-panel overflow-hidden">
+        <table className="spm-table">
+          <thead>
+            <tr>
+              <th>Snapshot</th>
+              <th className="text-right">Count</th>
+              <th>Open in</th>
+            </tr>
+          </thead>
+          <tbody>
+            {snapshot.map((row) => (
+              <tr key={row.label}>
+                <td className="text-[var(--spm-navy)]">{row.label}</td>
+                <td className="text-right tabular-nums font-medium text-[var(--spm-navy)]">
+                  {row.value}
+                </td>
+                <td>
+                  <Link
+                    href={row.href}
+                    className="text-[var(--spm-blue-secondary)] hover:underline"
+                  >
+                    {row.dest}
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="border-t border-[rgba(7,22,74,0.08)] px-4 py-3">
+          <p className="text-sm font-medium text-[var(--spm-navy)]">
             Why health is not 100%
           </p>
-          <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
-            {m.health.components
-              .filter((c) => c.violations > 0)
-              .map((c) => (
-                <li
-                  key={c.key}
-                  className="text-sm text-[var(--spm-text-muted)]"
-                >
-                  <span className="font-semibold text-[var(--spm-navy)]">
+          <ul className="mt-1.5 space-y-1">
+            {healthIssues.length === 0 ? (
+              <li className="text-sm text-[var(--spm-text-muted)]">
+                No weighted violations detected.
+              </li>
+            ) : (
+              healthIssues.map((c) => (
+                <li key={c.key} className="text-sm text-[var(--spm-text-muted)]">
+                  <span className="font-medium text-[var(--spm-navy)]">
                     {c.label}:
                   </span>{" "}
                   {c.violations} issue{c.violations === 1 ? "" : "s"} (−
                   {c.contribution.toFixed(1)} pts)
                 </li>
-              ))}
-            {m.health.components.every((c) => c.violations === 0) ? (
-              <li className="text-sm text-[var(--spm-text-muted)]">
-                No weighted violations detected.
-              </li>
-            ) : null}
+              ))
+            )}
           </ul>
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1.3fr_0.9fr]">
-        <Panel>
-          <PanelHeader>
-            <div>
-              <PanelTitle>Needs Attention</PanelTitle>
-              <PanelDescription>
-                Operational risks across integrity and nurture guarantees.
-              </PanelDescription>
-            </div>
-          </PanelHeader>
-          <div className="grid grid-cols-2 gap-2 p-4 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
-            {m.attention.map((item) => (
-              <Link
-                key={item.code}
-                href={item.href}
-                className="rounded-[1rem] border border-[rgba(7,22,74,0.08)] bg-[#f8fafd] px-3.5 py-3 transition hover:border-[rgba(47,111,196,0.35)] hover:bg-[#edf3ff]"
-              >
-                <p className="text-[2rem] font-semibold leading-none tracking-[-0.04em] text-[var(--spm-navy)]">
-                  {item.count}
-                </p>
-                <p className="mt-2 text-xs font-bold text-[var(--spm-text-muted)]">
-                  {item.label}
-                </p>
-              </Link>
-            ))}
+      <div className="grid gap-4 lg:grid-cols-2">
+        <section className="spm-panel overflow-hidden">
+          <div className="border-b border-[rgba(7,22,74,0.08)] px-4 py-3">
+            <h2 className="text-sm font-semibold text-[var(--spm-navy)]">
+              Needs attention
+            </h2>
+            <p className="mt-0.5 text-sm text-[var(--spm-text-muted)]">
+              Integrity and nurture queues with a count.
+            </p>
           </div>
-        </Panel>
+          <table className="spm-table">
+            <thead>
+              <tr>
+                <th>Queue</th>
+                <th className="text-right">Count</th>
+                <th>Open in</th>
+              </tr>
+            </thead>
+            <tbody>
+              {m.attention.map((item) => (
+                <tr key={item.code}>
+                  <td className="text-[var(--spm-navy)]">{item.label}</td>
+                  <td className="text-right tabular-nums font-medium text-[var(--spm-navy)]">
+                    {item.count}
+                  </td>
+                  <td>
+                    <Link
+                      href={item.href}
+                      className="text-[var(--spm-blue-secondary)] hover:underline"
+                    >
+                      {item.href.startsWith("/sources") ? "Sources" : "Leads"}
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
 
-        <Panel>
-          <PanelHeader>
-            <div>
-              <PanelTitle>Source Health</PanelTitle>
-              <PanelDescription>Capture integrity by channel.</PanelDescription>
-            </div>
-          </PanelHeader>
-          <ul className="space-y-2 p-4">
-            {m.sourceHealth.map((s) => (
-              <li key={s.sourceDefinitionId}>
-                <Link
-                  href={`/sources?source=${encodeURIComponent(s.sourceName)}`}
-                  className="flex items-center justify-between gap-3 rounded-[1rem] border border-[rgba(7,22,74,0.08)] px-3.5 py-3 hover:bg-[#f8fafd]"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-[var(--spm-navy)]">
+        <section className="spm-panel overflow-hidden">
+          <div className="border-b border-[rgba(7,22,74,0.08)] px-4 py-3">
+            <h2 className="text-sm font-semibold text-[var(--spm-navy)]">
+              Source health
+            </h2>
+            <p className="mt-0.5 text-sm text-[var(--spm-text-muted)]">
+              Capture integrity by channel.
+            </p>
+          </div>
+          <table className="spm-table">
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Accounted</th>
+                <th>Capture</th>
+                <th>Health</th>
+              </tr>
+            </thead>
+            <tbody>
+              {m.sourceHealth.map((s) => (
+                <tr key={s.sourceDefinitionId}>
+                  <td>
+                    <Link
+                      href={`/sources?source=${encodeURIComponent(s.sourceName)}`}
+                      className="font-medium text-[var(--spm-navy)] hover:underline"
+                    >
                       {s.sourceName}
-                    </p>
-                    <p className="text-xs text-[var(--spm-text-muted)]">
-                      {s.accountedFor}/{s.submissionsReceived} accounted ·{" "}
-                      {formatPercent(s.captureRate)}
-                    </p>
-                  </div>
-                  <Badge
-                    tone={
-                      s.health === "critical"
-                        ? "danger"
-                        : s.health === "warning"
-                          ? "warning"
-                          : "success"
-                    }
-                  >
-                    {s.health}
-                  </Badge>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Panel>
-      </section>
+                    </Link>
+                  </td>
+                  <td className="tabular-nums text-[var(--spm-text-muted)]">
+                    {s.accountedFor}/{s.submissionsReceived}
+                  </td>
+                  <td className="tabular-nums text-[var(--spm-text-muted)]">
+                    {formatPercent(s.captureRate)}
+                  </td>
+                  <td>
+                    <Badge
+                      tone={
+                        s.health === "critical"
+                          ? "danger"
+                          : s.health === "warning"
+                            ? "warning"
+                            : "success"
+                      }
+                    >
+                      {s.health}
+                    </Badge>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      </div>
 
       <Panel>
         <PanelHeader>
           <div>
-            <PanelTitle>Priority Leads</PanelTitle>
+            <PanelTitle>Priority leads</PanelTitle>
             <PanelDescription>
-              Highest-urgency records with an explicit why.
+              Highest-urgency records, why they sit here, and the next step.
             </PanelDescription>
           </div>
           <Link
             href="/nurture"
-            className="text-sm font-bold text-[var(--spm-blue-secondary)] hover:underline"
+            className="text-sm font-medium text-[var(--spm-blue-secondary)] hover:underline"
           >
-            Open nurture queue
+            Nurture queue
           </Link>
         </PanelHeader>
-        <ul className="divide-y divide-[rgba(7,22,74,0.06)] p-2">
-          {m.priorityLeads.map(({ lead, why, flags }) => (
-            <li key={lead.id}>
-              <Link
-                href={`/leads/${lead.id}`}
-                className="flex flex-col gap-2 rounded-[1rem] px-3 py-3.5 transition hover:bg-[#f7f9ff] sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-semibold tracking-[-0.02em] text-[var(--spm-navy)]">
+        <div className="overflow-x-auto">
+          <table className="spm-table">
+            <thead>
+              <tr>
+                <th>Lead</th>
+                <th>Why</th>
+                <th>Next step</th>
+                <th>Flags</th>
+              </tr>
+            </thead>
+            <tbody>
+              {m.priorityLeads.map(({ lead, why, flags }) => (
+                <tr key={lead.id}>
+                  <td>
+                    <Link
+                      href={`/leads/${lead.id}`}
+                      className="font-medium text-[var(--spm-navy)] hover:underline"
+                    >
                       {lead.first_name} {lead.last_name}
-                    </p>
-                    <Badge
-                      tone={
-                        lead.score_band === "P1"
-                          ? "hot"
-                          : lead.score_band === "P2"
-                            ? "high"
-                            : lead.score_band === "P3"
-                              ? "nurture"
-                              : "low"
-                      }
-                    >
+                    </Link>
+                    <p className="text-xs text-[var(--spm-text-muted)]">
                       {SCORE_BAND_LABELS[lead.score_band]} · {lead.score}
-                    </Badge>
-                  </div>
-                  <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
-                    {why}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {flags.slice(0, 2).map((f) => (
-                    <Badge
-                      key={f.code}
-                      tone={f.severity === "critical" ? "danger" : "warning"}
-                    >
-                      {f.label}
-                    </Badge>
-                  ))}
-                  <span className="text-sm font-medium text-[var(--spm-navy)]">
+                    </p>
+                  </td>
+                  <td className="max-w-xs text-[var(--spm-text-muted)]">{why}</td>
+                  <td className="whitespace-nowrap font-medium text-[var(--spm-navy)]">
                     {formatNextAction(lead.next_action_type)}
-                  </span>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+                  </td>
+                  <td>
+                    <div className="flex flex-wrap gap-1">
+                      {flags.slice(0, 2).map((f) => (
+                        <Badge
+                          key={f.code}
+                          tone={f.severity === "critical" ? "danger" : "warning"}
+                        >
+                          {f.label}
+                        </Badge>
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Panel>
     </div>
   );

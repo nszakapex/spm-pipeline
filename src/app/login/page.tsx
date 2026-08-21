@@ -20,34 +20,27 @@ export default async function LoginPage() {
   const demo = isDemoMode();
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-4 py-10">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-[rgba(79,157,255,0.2)] blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-[rgba(232,189,54,0.18)] blur-3xl" />
-      </div>
-
-      <Panel className="relative w-full max-w-md p-7 sm:p-8">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--spm-app-bg)] px-4 py-10">
+      <Panel className="w-full max-w-md p-6 sm:p-7">
         <div className="flex flex-col items-start gap-5">
           <BrandBanner />
           <div>
-            <h1 className="text-[1.85rem] font-semibold leading-[1.05] tracking-[-0.03em] text-[var(--spm-navy)]">
+            <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">
               {brandTokens.name.product}
             </h1>
-            <p className="mt-2 text-sm leading-6 text-[var(--spm-text-muted)]">
-              Sign in to Pipeline Control — lead integrity, prioritization, and
-              nurture for Superpower Mentors.
+            <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
+              Sign in to work the pipeline — capture, assignment, and next
+              steps for Superpower Mentors.
             </p>
           </div>
 
           {demo ? (
-            <div className="w-full space-y-3">
-              <p className="text-xs font-bold uppercase tracking-[0.06em] text-[var(--spm-text-muted)]">
-                Continue as
-              </p>
+            <div className="w-full space-y-2">
+              <p className="text-sm text-[var(--spm-text-muted)]">Sign in as</p>
               {DEMO_LOGIN_OPTIONS.map((opt) => (
                 <form key={opt.id} action={demoLoginAction}>
                   <input type="hidden" name="userId" value={opt.id} />
-                  <Button type="submit" className="h-12 w-full justify-between px-5">
+                  <Button type="submit" className="w-full justify-between px-4">
                     <span>{opt.label}</span>
                     <span className="text-xs font-medium text-white/80">
                       Enter
@@ -56,9 +49,8 @@ export default async function LoginPage() {
                 </form>
               ))}
               <p className="pt-2 text-xs leading-5 text-[var(--spm-text-muted)]">
-                Demo authentication uses an isolated server-side session cookie.
-                Records are synthetic sample data. HubSpot runs in mock mode.
-                Supabase Auth is not enabled in this prototype.
+                Demo session cookie only. Records are synthetic. HubSpot is
+                mock. Supabase Auth is not enabled.
               </p>
             </div>
           ) : (
@@ -69,7 +61,7 @@ export default async function LoginPage() {
             </div>
           )}
         </div>
-        <div className="mt-8 flex items-center gap-3 border-t border-[rgba(7,22,74,0.08)] pt-5">
+        <div className="mt-6 flex items-center gap-3 border-t border-[rgba(7,22,74,0.08)] pt-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={brandTokens.assets.logoMark}

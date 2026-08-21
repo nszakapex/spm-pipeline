@@ -22,7 +22,7 @@ export function BrandMark({
       />
       {showWordmark ? (
         <span className="min-w-0">
-          <span className="block text-[0.95rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
+          <span className="block text-sm font-semibold text-[var(--spm-navy)]">
             {brandTokens.name.product}
           </span>
           <span className="block truncate text-[11px] font-medium text-[var(--spm-text-muted)]">

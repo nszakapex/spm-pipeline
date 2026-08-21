@@ -1,14 +1,8 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import {
-  Panel,
-  PanelDescription,
-  PanelHeader,
-  PanelTitle,
-} from "@/components/ui/panel";
 import { getStore } from "@/lib/db/store";
 import { summarizeSourceIntegrity } from "@/lib/integrity/reconciliation";
-import { formatPercent } from "@/lib/utils";
+import { formatOpsDate, formatPercent } from "@/lib/utils";
 
 export const metadata = { title: "Sources" };
 
@@ -44,28 +38,21 @@ export default async function SourcesPage({
     );
 
   return (
-    <div className="space-y-6 animate-fade-up">
+    <div className="space-y-6">
       <header>
-        <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--spm-blue-secondary)]">
-          Lead capture & integrity
-        </p>
-        <h1 className="mt-1 text-[1.85rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
-          Sources
-        </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--spm-text-muted)]">
-          Every acquisition event is first-class. Reconciliation proves whether
-          submissions became CRM leads — including the gaps.
+        <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">Sources</h1>
+        <p className="mt-1 max-w-3xl text-sm text-[var(--spm-text-muted)]">
+          Submissions vs CRM representation. Open a source to see unmatched
+          events.
         </p>
       </header>
 
       {selected && selected.missingCount > 0 ? (
-        <div className="rounded-[1.25rem] border border-[rgba(194,59,74,0.25)] bg-[#fff6f7] px-5 py-4">
-          <p className="text-sm font-semibold text-[var(--spm-danger)]">
+        <div className="rounded-md border border-[rgba(194,59,74,0.25)] bg-[#fff6f7] px-4 py-3">
+          <p className="text-sm font-medium text-[var(--spm-danger)]">
             {selected.sourceName}: {selected.submissionsReceived} submissions ·{" "}
-            {selected.accountedFor} accounted for ·{" "}
-            <span className="underline decoration-2 underline-offset-2">
-              {selected.missingCount} potentially missing
-            </span>
+            {selected.accountedFor} accounted · {selected.missingCount}{" "}
+            potentially missing
           </p>
           <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
             Source event existed, but CRM representation is missing for at least
@@ -74,119 +61,113 @@ export default async function SourcesPage({
         </div>
       ) : null}
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {summaries.map((s) => (
-          <Link
-            key={s.sourceDefinitionId}
-            href={`/sources?source=${encodeURIComponent(s.sourceName)}`}
-            className={`spm-panel p-5 transition hover:-translate-y-0.5 ${
-              selected?.sourceDefinitionId === s.sourceDefinitionId
-                ? "ring-2 ring-[var(--spm-blue-secondary)]/30"
-                : ""
-            }`}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-semibold tracking-[-0.02em] text-[var(--spm-navy)]">
-                  {s.sourceName}
-                </p>
-                <p className="mt-1 text-xs font-medium uppercase tracking-[0.04em] text-[var(--spm-text-muted)]">
-                  {s.category.replaceAll("_", " ")}
-                </p>
-              </div>
-              <Badge
-                tone={
-                  s.health === "critical"
-                    ? "danger"
-                    : s.health === "warning"
-                      ? "warning"
-                      : "success"
-                }
-              >
-                {s.health}
-              </Badge>
-            </div>
-            <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Submissions</dt>
-                <dd className="font-semibold">{s.submissionsReceived}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Accounted</dt>
-                <dd className="font-semibold">{s.accountedFor}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Unmatched</dt>
-                <dd className="font-semibold">{s.unmatched}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Sync failures</dt>
-                <dd className="font-semibold">{s.syncFailures}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Capture</dt>
-                <dd className="font-semibold">{formatPercent(s.captureRate)}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Qualified</dt>
-                <dd className="font-semibold">
-                  {s.qualifiedCount} · {formatPercent(s.qualifiedRate)}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Meetings</dt>
-                <dd className="font-semibold">
-                  {s.meetingCount} · {formatPercent(s.meetingRate)}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Won</dt>
-                <dd className="font-semibold">
-                  {s.wonCount} · {formatPercent(s.wonRate)}
-                </dd>
-              </div>
-            </dl>
-            {s.missingCount > 0 ? (
-              <p className="mt-4 text-sm font-bold text-[var(--spm-danger)]">
-                {s.missingCount} potentially missing
-              </p>
-            ) : null}
-          </Link>
-        ))}
-      </div>
+      <section className="spm-panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="spm-table">
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th className="text-right">Submissions</th>
+                <th className="text-right">Accounted</th>
+                <th className="text-right">Unmatched</th>
+                <th className="text-right">Sync fail</th>
+                <th>Capture</th>
+                <th>Qualified</th>
+                <th>Won</th>
+                <th>Health</th>
+              </tr>
+            </thead>
+            <tbody>
+              {summaries.map((s) => {
+                const active =
+                  selected?.sourceDefinitionId === s.sourceDefinitionId;
+                return (
+                  <tr
+                    key={s.sourceDefinitionId}
+                    aria-selected={active}
+                    className={active ? "bg-[#edf3ff]" : undefined}
+                  >
+                    <td>
+                      <Link
+                        href={`/sources?source=${encodeURIComponent(s.sourceName)}`}
+                        className="font-medium text-[var(--spm-navy)] hover:underline"
+                      >
+                        {s.sourceName}
+                      </Link>
+                      <p className="text-xs text-[var(--spm-text-muted)]">
+                        {s.category.replaceAll("_", " ")}
+                      </p>
+                      {s.missingCount > 0 ? (
+                        <p className="mt-1 text-xs font-medium text-[var(--spm-danger)]">
+                          {s.missingCount} potentially missing
+                        </p>
+                      ) : null}
+                    </td>
+                    <td className="text-right tabular-nums">
+                      {s.submissionsReceived}
+                    </td>
+                    <td className="text-right tabular-nums">{s.accountedFor}</td>
+                    <td className="text-right tabular-nums">{s.unmatched}</td>
+                    <td className="text-right tabular-nums">{s.syncFailures}</td>
+                    <td className="tabular-nums">
+                      {formatPercent(s.captureRate)}
+                    </td>
+                    <td className="tabular-nums">
+                      {s.qualifiedCount} · {formatPercent(s.qualifiedRate)}
+                    </td>
+                    <td className="tabular-nums">
+                      {s.wonCount} · {formatPercent(s.wonRate)}
+                    </td>
+                    <td>
+                      <Badge
+                        tone={
+                          s.health === "critical"
+                            ? "danger"
+                            : s.health === "warning"
+                              ? "warning"
+                              : "success"
+                        }
+                      >
+                        {s.health}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       {selected ? (
-        <Panel>
-          <PanelHeader>
-            <div>
-              <PanelTitle>{selected.sourceName} · reconciliation</PanelTitle>
-              <PanelDescription>
-                Recent source events for this channel.
-              </PanelDescription>
-            </div>
-          </PanelHeader>
-          <div className="overflow-x-auto p-2">
-            <table className="min-w-full text-left text-sm">
-              <thead className="text-xs uppercase tracking-[0.04em] text-[var(--spm-text-muted)]">
+        <section className="spm-panel overflow-hidden">
+          <div className="border-b border-[rgba(7,22,74,0.08)] px-4 py-3">
+            <h2 className="text-sm font-semibold text-[var(--spm-navy)]">
+              {selected.sourceName} — recent events
+            </h2>
+            <p className="mt-0.5 text-sm text-[var(--spm-text-muted)]">
+              Reconciliation status for this channel.
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="spm-table">
+              <thead>
                 <tr>
-                  <th className="px-3 py-2 font-bold">Received</th>
-                  <th className="px-3 py-2 font-bold">Identity</th>
-                  <th className="px-3 py-2 font-bold">Status</th>
-                  <th className="px-3 py-2 font-bold">Reason</th>
-                  <th className="px-3 py-2 font-bold">Lead</th>
+                  <th>Received</th>
+                  <th>Identity</th>
+                  <th>Status</th>
+                  <th>Reason</th>
+                  <th>Lead</th>
                 </tr>
               </thead>
               <tbody>
                 {selectedEvents.slice(0, 25).map((e) => (
-                  <tr
-                    key={e.id}
-                    className="border-t border-[rgba(7,22,74,0.06)]"
-                  >
-                    <td className="px-3 py-3 whitespace-nowrap text-[var(--spm-text-muted)]">
-                      {new Date(e.received_at).toLocaleString()}
+                  <tr key={e.id}>
+                    <td className="whitespace-nowrap text-[var(--spm-text-muted)]">
+                      {formatOpsDate(e.received_at)}
                     </td>
-                    <td className="px-3 py-3">
-                      <p className="font-semibold text-[var(--spm-navy)]">
+                    <td>
+                      <p className="font-medium text-[var(--spm-navy)]">
                         {e.normalized_identity_json.first_name}{" "}
                         {e.normalized_identity_json.last_name}
                       </p>
@@ -194,7 +175,7 @@ export default async function SourcesPage({
                         {e.normalized_identity_json.email}
                       </p>
                     </td>
-                    <td className="px-3 py-3">
+                    <td>
                       <Badge
                         tone={
                           e.reconciliation_status === "unmatched" ||
@@ -208,14 +189,14 @@ export default async function SourcesPage({
                         {e.reconciliation_status}
                       </Badge>
                     </td>
-                    <td className="max-w-xs px-3 py-3 text-[var(--spm-text-muted)]">
+                    <td className="max-w-xs text-[var(--spm-text-muted)]">
                       {e.reconciliation_reason}
                     </td>
-                    <td className="px-3 py-3">
+                    <td>
                       {e.matched_lead_id ? (
                         <Link
                           href={`/leads/${e.matched_lead_id}`}
-                          className="font-bold text-[var(--spm-blue-secondary)] hover:underline"
+                          className="font-medium text-[var(--spm-blue-secondary)] hover:underline"
                         >
                           Open
                         </Link>
@@ -228,7 +209,7 @@ export default async function SourcesPage({
               </tbody>
             </table>
           </div>
-        </Panel>
+        </section>
       ) : null}
     </div>
   );

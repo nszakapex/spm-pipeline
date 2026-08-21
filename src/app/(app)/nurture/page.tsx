@@ -1,11 +1,5 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import {
-  Panel,
-  PanelDescription,
-  PanelHeader,
-  PanelTitle,
-} from "@/components/ui/panel";
 import { filterLeadsByFlag, getLeadFlags } from "@/lib/analytics/queries";
 import { getStore } from "@/lib/db/store";
 import { SCORE_BAND_LABELS, formatNextAction, type Lead } from "@/types/domain";
@@ -32,12 +26,12 @@ export default function NurturePage() {
   const sections = [
     {
       key: "needs_reply",
-      title: "Needs Reply",
+      title: "Needs reply",
       leads: filterLeadsByFlag("needs_reply"),
     },
     {
       key: "due_today",
-      title: "Due Today",
+      title: "Due today",
       leads: getStore()
         .getLeads()
         .filter((l) => {
@@ -57,25 +51,23 @@ export default function NurturePage() {
       leads: [
         ...filterLeadsByFlag("follow_up_overdue"),
         ...filterLeadsByFlag("first_contact_overdue"),
-      ].filter(
-        (l, i, arr) => arr.findIndex((x) => x.id === l.id) === i,
-      ),
+      ].filter((l, i, arr) => arr.findIndex((x) => x.id === l.id) === i),
     },
     {
       key: "no_show",
-      title: "No-show Recovery",
+      title: "No-show recovery",
       leads: filterLeadsByFlag("no_show_recovery"),
     },
     {
       key: "long_term",
-      title: "Long-Term Nurture",
+      title: "Long-term nurture",
       leads: getStore()
         .getLeads()
         .filter((l) => l.disposition === "NURTURE"),
     },
     {
       key: "no_response",
-      title: "No Response",
+      title: "No response",
       leads: getStore()
         .getLeads()
         .filter((l) => l.disposition === "NO_RESPONSE"),
@@ -83,75 +75,83 @@ export default function NurturePage() {
   ];
 
   return (
-    <div className="space-y-5 animate-fade-up">
+    <div className="space-y-6">
       <header>
-        <h1 className="text-[1.85rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
-          Nurture
+        <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">
+          Nurture queue
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-[var(--spm-text-muted)]">
-          Daily working queue — why each lead is here, last touch, and the
-          next step.
+          Leads you should work, grouped by reason, with last touch and next
+          step on each row.
         </p>
       </header>
 
       {sections.map((section) => (
-        <Panel key={section.key}>
-          <PanelHeader>
-            <div>
-              <PanelTitle>
-                {section.title}{" "}
-                <span className="text-[var(--spm-text-muted)]">
-                  ({section.leads.length})
-                </span>
-              </PanelTitle>
-              <PanelDescription>
-                Operational queue for {section.title.toLowerCase()}.
-              </PanelDescription>
-            </div>
-          </PanelHeader>
+        <section key={section.key} className="spm-panel overflow-hidden">
+          <div className="border-b border-[rgba(7,22,74,0.08)] px-4 py-3">
+            <h2 className="text-sm font-semibold text-[var(--spm-navy)]">
+              {section.title}{" "}
+              <span className="font-medium text-[var(--spm-text-muted)]">
+                ({section.leads.length})
+              </span>
+            </h2>
+          </div>
           {section.leads.length === 0 ? (
-            <p className="px-5 pb-5 text-sm text-[var(--spm-text-muted)]">
-              Nothing in this queue right now.
+            <p className="px-4 py-3 text-sm text-[var(--spm-text-muted)]">
+              Empty.
             </p>
           ) : (
-            <ul className="divide-y divide-[rgba(7,22,74,0.06)] px-2 pb-2">
-              {section.leads.map((lead) => {
-                const item = row(lead);
-                return (
-                  <li key={lead.id}>
-                    <Link
-                      href={`/leads/${lead.id}`}
-                      className="flex flex-col gap-2 rounded-[1rem] px-3 py-3.5 hover:bg-[#f7f9ff] sm:flex-row sm:items-center sm:justify-between"
-                    >
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-semibold text-[var(--spm-navy)]">
-                            {lead.first_name} {lead.last_name}
-                          </p>
-                          <Badge
-                            tone={lead.score_band === "P1" ? "hot" : "neutral"}
+            <div className="overflow-x-auto">
+              <table className="spm-table">
+                <thead>
+                  <tr>
+                    <th>Lead</th>
+                    <th>Why</th>
+                    <th>Last touch</th>
+                    <th>Due</th>
+                    <th>Next step</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {section.leads.map((lead) => {
+                    const item = row(lead);
+                    return (
+                      <tr key={lead.id}>
+                        <td>
+                          <Link
+                            href={`/leads/${lead.id}`}
+                            className="font-medium text-[var(--spm-navy)] hover:underline"
                           >
-                            {SCORE_BAND_LABELS[lead.score_band]}
-                          </Badge>
-                        </div>
-                        <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
+                            {lead.first_name} {lead.last_name}
+                          </Link>
+                          <p className="mt-0.5">
+                            <Badge
+                              tone={lead.score_band === "P1" ? "hot" : "neutral"}
+                            >
+                              {SCORE_BAND_LABELS[lead.score_band]}
+                            </Badge>
+                          </p>
+                        </td>
+                        <td className="max-w-sm text-[var(--spm-text-muted)]">
                           {item.why}
-                        </p>
-                        <p className="mt-1 text-xs text-[var(--spm-text-muted)]">
-                          Last touch {formatOpsDate(item.lastTouch)}
-                          {item.due ? ` · Due ${formatOpsDate(item.due)}` : ""}
-                        </p>
-                      </div>
-                      <p className="text-sm font-medium text-[var(--spm-navy)]">
-                        {formatNextAction(item.action)}
-                      </p>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+                        </td>
+                        <td className="whitespace-nowrap text-[var(--spm-text-muted)]">
+                          {formatOpsDate(item.lastTouch)}
+                        </td>
+                        <td className="whitespace-nowrap text-[var(--spm-text-muted)]">
+                          {item.due ? formatOpsDate(item.due) : "—"}
+                        </td>
+                        <td className="whitespace-nowrap font-medium text-[var(--spm-navy)]">
+                          {formatNextAction(item.action)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
-        </Panel>
+        </section>
       ))}
     </div>
   );

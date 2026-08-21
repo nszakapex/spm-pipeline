@@ -56,19 +56,19 @@ export default async function LeadDetailPage({
   const flags = getLeadFlags(lead);
 
   return (
-    <div className="space-y-5 animate-fade-up">
+    <div className="space-y-5">
       <Link
         href="/leads"
-        className="text-sm font-bold text-[var(--spm-blue-secondary)] hover:underline"
+        className="text-sm font-medium text-[var(--spm-blue-secondary)] hover:underline"
       >
         ← Back to leads
       </Link>
 
-      <header className="spm-panel p-5 sm:p-6">
+      <header className="spm-panel p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-[1.9rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
+              <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">
                 {lead.first_name} {lead.last_name}
               </h1>
               <Badge
@@ -123,7 +123,6 @@ export default async function LeadDetailPage({
                   type="button"
                   variant={label === "Call" ? "primary" : "secondary"}
                   size="sm"
-                  className="min-h-11"
                   disabled
                   title="Mock action — live outreach not enabled"
                 >
@@ -146,24 +145,24 @@ export default async function LeadDetailPage({
             </div>
           </PanelHeader>
           <div className="px-5 pb-5">
-            <p className="text-2xl font-semibold text-[var(--spm-navy)]">
+            <p className="text-base font-semibold text-[var(--spm-navy)]">
               {formatNextAction(lead.next_action_type)}
             </p>
             <p className="mt-2 text-sm text-[var(--spm-text-muted)]">
               {lead.next_action_note ?? "Schedule a follow-up to keep this lead visible."}
             </p>
             {lead.next_action_at ? (
-              <p className="mt-3 text-sm font-semibold text-[var(--spm-blue-secondary)]">
+              <p className="mt-3 text-sm font-medium text-[var(--spm-navy)]">
                 Due {formatOpsDate(lead.next_action_at)}
               </p>
             ) : (
-              <p className="mt-3 text-sm font-semibold text-[var(--spm-danger)]">
+              <p className="mt-3 text-sm font-medium text-[var(--spm-danger)]">
                 Missing next action timestamp
               </p>
             )}
             <p className="mt-4 text-sm text-[var(--spm-text-muted)]">
               Owner:{" "}
-              <span className="font-semibold text-[var(--spm-navy)]">
+              <span className="font-medium text-[var(--spm-navy)]">
                 {owner?.name ?? "Unassigned"}
               </span>
             </p>
@@ -173,7 +172,7 @@ export default async function LeadDetailPage({
         <Panel>
           <PanelHeader>
             <div>
-              <PanelTitle>Why this score?</PanelTitle>
+              <PanelTitle>Score factors</PanelTitle>
               <PanelDescription>
                 Deterministic factors · {lead.score_version}
               </PanelDescription>
@@ -187,7 +186,7 @@ export default async function LeadDetailPage({
               >
                 <span className="text-[var(--spm-navy)]">{f.label}</span>
                 <span
-                  className={`font-bold ${
+                  className={`font-medium ${
                     f.points >= 0
                       ? "text-[var(--spm-success)]"
                       : "text-[var(--spm-danger)]"
@@ -206,16 +205,16 @@ export default async function LeadDetailPage({
           <PanelHeader>
             <div>
               <PanelTitle>Timeline</PanelTitle>
-              <PanelDescription>Chronological activity history</PanelDescription>
+              <PanelDescription>Activity on this lead</PanelDescription>
             </div>
           </PanelHeader>
           <ol className="space-y-3 px-5 pb-5">
             {activities.map((a) => (
               <li key={a.id} className="relative border-l-2 border-[#dbe7f7] pl-4">
-                <p className="text-xs font-bold text-[var(--spm-text-muted)]">
-                  {new Date(a.occurred_at).toLocaleString()}
+                <p className="text-xs text-[var(--spm-text-muted)]">
+                  {formatOpsDate(a.occurred_at)}
                 </p>
-                <p className="font-semibold text-[var(--spm-navy)]">{a.title}</p>
+                <p className="font-medium text-[var(--spm-navy)]">{a.title}</p>
                 {a.body_summary ? (
                   <p className="text-sm text-[var(--spm-text-muted)]">
                     {a.body_summary}
@@ -236,15 +235,15 @@ export default async function LeadDetailPage({
             <dl className="grid grid-cols-2 gap-3 px-5 pb-5 text-sm">
               <div>
                 <dt className="text-[var(--spm-text-muted)]">Source</dt>
-                <dd className="font-semibold">{lead.source}</dd>
+                <dd className="font-medium">{lead.source}</dd>
               </div>
               <div>
                 <dt className="text-[var(--spm-text-muted)]">Campaign</dt>
-                <dd className="font-semibold">{lead.campaign ?? "—"}</dd>
+                <dd className="font-medium">{lead.campaign ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-[var(--spm-text-muted)]">UTM</dt>
-                <dd className="font-semibold">
+                <dd className="font-medium">
                   {[lead.utm_source, lead.utm_medium, lead.utm_campaign]
                     .filter(Boolean)
                     .join(" / ") || "—"}
@@ -252,7 +251,7 @@ export default async function LeadDetailPage({
               </div>
               <div>
                 <dt className="text-[var(--spm-text-muted)]">Source event</dt>
-                <dd className="font-semibold">
+                <dd className="font-medium">
                   {sourceEvent ? sourceEvent.reconciliation_status : "—"}
                 </dd>
               </div>
@@ -269,23 +268,23 @@ export default async function LeadDetailPage({
             <dl className="grid grid-cols-2 gap-3 px-5 pb-5 text-sm">
               <div>
                 <dt className="text-[var(--spm-text-muted)]">Contact</dt>
-                <dd className="font-semibold">
+                <dd className="font-medium">
                   {lead.hubspot_contact_id ?? "—"}
                 </dd>
               </div>
               <div>
                 <dt className="text-[var(--spm-text-muted)]">Lead</dt>
-                <dd className="font-semibold">{lead.hubspot_lead_id ?? "—"}</dd>
+                <dd className="font-medium">{lead.hubspot_lead_id ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-[var(--spm-text-muted)]">Deal</dt>
-                <dd className="font-semibold">{lead.hubspot_deal_id ?? "—"}</dd>
+                <dd className="font-medium">{lead.hubspot_deal_id ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-[var(--spm-text-muted)]">Last synced</dt>
-                <dd className="font-semibold">
+                <dd className="font-medium">
                   {lead.last_synced_at
-                    ? new Date(lead.last_synced_at).toLocaleString()
+                    ? formatOpsDate(lead.last_synced_at)
                     : "—"}
                 </dd>
               </div>
