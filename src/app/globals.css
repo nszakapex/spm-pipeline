@@ -11,7 +11,7 @@
   --spm-deep-blue: #163a8a;
   --spm-sand: #e8e1d7;
   --spm-mark: #2563eb;
-  --spm-app-bg: #050814;
+  --spm-app-bg: #f4f7fc;
   --spm-ok: #1c48e6;
   --spm-flag: #e8bd36;
   --spm-border: rgba(7, 22, 74, 0.12);
@@ -47,9 +47,9 @@ body {
 
 body {
   background:
-    radial-gradient(900px 480px at 18% -8%, rgba(79, 157, 255, 0.22), transparent 55%),
-    radial-gradient(720px 420px at 92% 110%, rgba(232, 189, 54, 0.12), transparent 50%),
-    #050814;
+    radial-gradient(1200px 600px at 10% -10%, rgba(79, 157, 255, 0.16), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgba(232, 189, 54, 0.12), transparent 45%),
+    var(--spm-app-bg);
   color: var(--spm-navy);
   font-family: "Lucida Grande", "Helvetica Neue", Inter, "Avenir Next", ui-sans-serif, system-ui, sans-serif;
   font-size: 14px;
@@ -94,9 +94,8 @@ a {
   border-radius: 14px;
   background: #e8edf4;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.22),
-    0 12px 40px rgba(0, 0, 0, 0.55),
-    0 40px 90px -20px rgba(0, 0, 0, 0.7);
+    0 0 0 1px rgba(7, 22, 74, 0.12),
+    0 18px 50px -28px rgba(7, 22, 74, 0.35);
 }
 
 .spm-titlebar {
@@ -291,11 +290,11 @@ a {
   bottom: 0;
   z-index: 40;
   padding: 0 0 max(0.35rem, env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, #6b778c 0%, #2c3448 12%, #121826 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.55);
+  background: linear-gradient(180deg, #f7f9fc 0%, #d5dde8 100%);
+  border-top: 1px solid #8fa0b8;
   box-shadow:
-    0 -10px 28px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    0 -8px 24px rgba(7, 22, 74, 0.1),
+    inset 0 1px 0 #fff;
 }
 
 @media (min-width: 768px) {

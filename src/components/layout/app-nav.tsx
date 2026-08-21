@@ -100,11 +100,11 @@ export function MobileBottomNav() {
                 className={cn(
                   "flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg text-[11px] font-semibold",
                   active
-                    ? "bg-white/15 text-[var(--spm-sky)] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]"
-                    : "text-white",
+                    ? "bg-white/70 text-[var(--spm-blue-primary)] shadow-[inset_0_1px_0_#fff]"
+                    : "text-[var(--spm-navy)]",
                 )}
               >
-                <Icon className="size-6 drop-shadow-[0_1px_1px_rgba(0,0,0,0.65)]" />
+                <Icon className="size-6" />
                 {item.label}
               </Link>
             </li>
@@ -117,15 +117,15 @@ export function MobileBottomNav() {
 
 export function MobileTopBar({ title }: { title?: string }) {
   return (
-    <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-white/10 bg-[#0b1020]/90 px-4 py-3 backdrop-blur-xl md:hidden">
-      <BrandMark tone="light" />
+    <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-[#b7c2d3] bg-[linear-gradient(180deg,#f7f9fc,#e4ebf4)] px-4 py-3 md:hidden">
+      <BrandMark />
       {title ? (
-        <span className="text-sm font-semibold text-white">{title}</span>
+        <span className="text-sm font-semibold text-[var(--spm-navy)]">{title}</span>
       ) : null}
       <div className="flex items-center gap-1">
         <Link
           href="/settings"
-          className="grid size-10 place-items-center rounded-full text-white/70"
+          className="grid size-10 place-items-center rounded-full text-[var(--spm-navy)]/70"
           aria-label="Settings"
         >
           <Settings className="size-5" />

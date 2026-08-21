@@ -37,7 +37,7 @@ export const brandTokens = {
     sand: "#e8e1d7",
     white: "#ffffff",
     /** Confirmed cream — used as the ops canvas */
-    appBackground: "#050814",
+    appBackground: "#f4f7fc",
     surface: "#ffffff",
     border: "rgba(7, 22, 74, 0.12)",
     borderStrong: "rgba(7, 22, 74, 0.16)",
