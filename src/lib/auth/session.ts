@@ -64,20 +64,4 @@ export async function requireSessionUser(): Promise<SessionUser> {
   return user;
 }
 
-export const DEMO_LOGIN_OPTIONS = [
-  {
-    id: "user_001",
-    label: "Max Sussman (Sales)",
-    email: "max.sussman@example.spm-pipeline.local",
-  },
-  {
-    id: "user_002",
-    label: "Mack Ianni (Sales)",
-    email: "mack.ianni@example.spm-pipeline.local",
-  },
-  {
-    id: "user_003",
-    label: "Nate Szakallas (Admin)",
-    email: "nate.szakallas@example.spm-pipeline.local",
-  },
-] as const;
+export { DEMO_LOGIN_OPTIONS } from "@/lib/auth/demo-login";

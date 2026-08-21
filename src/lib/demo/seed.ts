@@ -42,7 +42,7 @@ export interface DemoDataset {
   syncEvents: IntegrationSyncEvent[];
 }
 
-const USERS: AppUser[] = [
+export const DEMO_USERS: AppUser[] = [
   {
     id: "user_001",
     email: "max.sussman@example.spm-pipeline.local",
@@ -1245,7 +1245,7 @@ export function getDemoDataset(): DemoDataset {
   const syncEvents = buildSyncEvents(leads, sourceEvents);
 
   cachedDataset = {
-    users: USERS,
+    users: DEMO_USERS,
     sources: SOURCES,
     leads,
     sourceEvents,

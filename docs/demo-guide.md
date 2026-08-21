@@ -20,7 +20,7 @@ openssl rand -hex 32
 npm run dev
 ```
 
-Open http://localhost:3000 and sign in as **Max Sussman**.
+Open http://localhost:3000 and sign in as **Max Sussman** (Sales), **Mack Ianni** (Sales), or **Nate Szakallas** (Admin).
 
 `DEMO_SESSION_SECRET` must be at least 32 characters. On Vercel Preview/Production it is required and must not use placeholder or test-only values.
 
