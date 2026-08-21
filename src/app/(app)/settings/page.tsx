@@ -4,7 +4,7 @@ import {
   PanelHeader,
   PanelTitle,
 } from "@/components/ui/panel";
-import { getEnv, isDemoMode } from "@/lib/env";
+import { getEnv } from "@/lib/env";
 import { DEFAULT_SLA, STAGE_LABELS } from "@/types/domain";
 import { SCORE_VERSION } from "@/lib/scoring/score-lead";
 
@@ -23,6 +23,25 @@ export default function SettingsPage() {
           Prototype configuration and operational defaults.
         </p>
       </header>
+
+      <Panel>
+        <PanelHeader>
+          <div>
+            <PanelTitle>Session</PanelTitle>
+            <PanelDescription>End the demo session on this device.</PanelDescription>
+          </div>
+        </PanelHeader>
+        <div className="px-5 pb-5">
+          <form action="/api/logout" method="post">
+            <button
+              type="submit"
+              className="inline-flex h-11 items-center justify-center rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-5 text-sm font-semibold text-[var(--spm-navy)] hover:bg-[#f7f9ff]"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
+      </Panel>
 
       <Panel>
         <PanelHeader>
@@ -46,9 +65,8 @@ export default function SettingsPage() {
           <div>
             <dt className="text-[var(--spm-text-muted)]">Auth</dt>
             <dd className="font-semibold">
-              {isDemoMode()
-                ? "Demo session cookie (isolated from production Auth)"
-                : "Supabase Auth"}
+              Demo session cookie only. Supabase Auth mode is unavailable in
+              this prototype.
             </dd>
           </div>
           <div>

@@ -1,5 +1,4 @@
 import { getDemoDataset, type DemoDataset } from "@/lib/demo/seed";
-import { isDemoMode } from "@/lib/env";
 import type {
   Activity,
   AppUser,
@@ -53,14 +52,9 @@ function createDemoStore(): DataStore {
 
 /**
  * Data access entry point.
- * Demo mode uses the in-memory seeded store.
- * Auth mode will later query Supabase using the same interface.
+ * Always serves the in-memory seeded dataset for this prototype.
+ * Does not contact Supabase or any external database.
  */
 export function getStore(): DataStore {
-  if (!isDemoMode()) {
-    // Prototype still serves seeded data until live Supabase wiring is approved.
-    // Auth mode only changes authentication — not HubSpot live mode.
-    return createDemoStore();
-  }
   return createDemoStore();
 }

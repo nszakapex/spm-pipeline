@@ -1,7 +1,7 @@
 # Brand Audit — Superpower Mentors (current public site)
 
-**Audited:** 2026-08-20  
-**Source of truth:** https://superpowermentors.com (release meta `spm:release` / commit dated 2026-08-12)  
+**Audited:** 2026-08-20
+**Source of truth:** https://superpowermentors.com (release meta `spm:release` / commit dated 2026-08-12)
 **Purpose:** Ground SPM Pipeline UI in the live public brand — not legacy SPM branding.
 
 ## Confirmed assets
@@ -12,7 +12,7 @@
 | Logo mark / favicon | https://superpowermentors.com/favicon.svg | Copied to `public/brand/logo-mark.svg` |
 | Social preview | https://superpowermentors.com/images/social-preview-v6.png | Reference only |
 
-Logo fills in banner SVG: wordmark `#07164A`, mark `#2563eb`.  
+Logo fills in banner SVG: wordmark `#07164A`, mark `#2563eb`.
 Favicon mark fill: `#2563eb`.
 
 **Authorization note:** Prototype uses publicly served SVG assets. Request an authorized internal-software logo package before production distribution.

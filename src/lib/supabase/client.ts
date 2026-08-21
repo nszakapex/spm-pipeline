@@ -1,10 +1,9 @@
-import { createBrowserClient } from "@supabase/ssr";
-import { getEnv } from "@/lib/env";
-
-export function createClient() {
-  const env = getEnv();
-  return createBrowserClient(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+/**
+ * Supabase browser client stub.
+ * APP_MODE=auth is unavailable in this prototype — do not call this module.
+ */
+export function createClient(): never {
+  throw new Error(
+    "Supabase Auth is unavailable in this prototype. Use APP_MODE=demo.",
   );
 }

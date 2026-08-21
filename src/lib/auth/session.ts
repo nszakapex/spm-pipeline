@@ -1,88 +1,59 @@
 import { cookies } from "next/headers";
-import { createHmac, timingSafeEqual } from "crypto";
 import { getEnv, isDemoMode } from "@/lib/env";
 import { getStore } from "@/lib/db/store";
 import type { AppUser } from "@/types/domain";
+import {
+  DEMO_SESSION_COOKIE,
+  createDemoSessionToken as createToken,
+  verifyDemoSessionToken as verifyToken,
+} from "@/lib/auth/demo-token";
 
-export const DEMO_SESSION_COOKIE = "spm_demo_session";
+export {
+  DEMO_SESSION_COOKIE,
+  DEMO_SESSION_MAX_AGE_SECONDS,
+} from "@/lib/auth/demo-token";
 
 export interface SessionUser {
   id: string;
   email: string;
   name: string;
   role: AppUser["role"];
-  mode: "demo" | "auth";
-}
-
-function sign(value: string): string {
-  const secret = getEnv().DEMO_SESSION_SECRET;
-  return createHmac("sha256", secret).update(value).digest("hex");
+  mode: "demo";
 }
 
 export function createDemoSessionToken(userId: string): string {
-  const payload = `${userId}.${Date.now()}`;
-  return `${payload}.${sign(payload)}`;
+  return createToken(userId, getEnv().DEMO_SESSION_SECRET);
 }
 
 export function verifyDemoSessionToken(token: string): string | null {
-  const parts = token.split(".");
-  if (parts.length !== 3) return null;
-  const [userId, ts, sig] = parts;
-  if (!userId || !ts || !sig) return null;
-  const payload = `${userId}.${ts}`;
-  const expected = sign(payload);
-  try {
-    const a = Buffer.from(sig);
-    const b = Buffer.from(expected);
-    if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-  } catch {
-    return null;
-  }
-  const ageMs = Date.now() - Number(ts);
-  if (!Number.isFinite(ageMs) || ageMs > 1000 * 60 * 60 * 24 * 14) return null;
-  return userId;
+  return verifyToken(token, getEnv().DEMO_SESSION_SECRET);
 }
 
+/**
+ * Verified session lookup — the authorization source of truth for app routes.
+ * Demo mode only. APP_MODE=auth fails at getEnv().
+ */
 export async function getSessionUser(): Promise<SessionUser | null> {
-  if (isDemoMode()) {
-    const jar = await cookies();
-    const token = jar.get(DEMO_SESSION_COOKIE)?.value;
-    if (!token) return null;
-    const userId = verifyDemoSessionToken(token);
-    if (!userId) return null;
-    const user = getStore().getUser(userId);
-    if (!user) return null;
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      mode: "demo",
-    };
-  }
+  // Ensures APP_MODE=auth / live HubSpot are rejected before any auth path runs.
+  if (!isDemoMode()) return null;
 
-  // Auth mode: Supabase session (wired; requires env). Soft-fail to null if unset.
-  try {
-    const { createClient } = await import("@/lib/supabase/server");
-    const supabase = await createClient();
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) return null;
-    const storeUser =
-      getStore().getUsers().find((u) => u.email === data.user.email) ?? null;
-    return {
-      id: data.user.id,
-      email: data.user.email ?? "",
-      name:
-        storeUser?.name ??
-        (data.user.user_metadata?.full_name as string | undefined) ??
-        data.user.email ??
-        "User",
-      role: storeUser?.role ?? "sales",
-      mode: "auth",
-    };
-  } catch {
-    return null;
-  }
+  const jar = await cookies();
+  const token = jar.get(DEMO_SESSION_COOKIE)?.value;
+  if (!token) return null;
+
+  const userId = verifyDemoSessionToken(token);
+  if (!userId) return null;
+
+  const user = getStore().getUser(userId);
+  if (!user) return null;
+
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    mode: "demo",
+  };
 }
 
 export async function requireSessionUser(): Promise<SessionUser> {

@@ -1,8 +1,9 @@
+import { redirect } from "next/navigation";
 import { BrandBanner } from "@/components/brand/brand-mark";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { demoLoginAction } from "@/lib/auth/actions";
-import { DEMO_LOGIN_OPTIONS } from "@/lib/auth/session";
+import { DEMO_LOGIN_OPTIONS, getSessionUser } from "@/lib/auth/session";
 import { brandTokens } from "@/lib/brand-tokens";
 import { isDemoMode } from "@/lib/env";
 
@@ -10,7 +11,12 @@ export const metadata = {
   title: "Sign in",
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await getSessionUser();
+  if (session) {
+    redirect("/dashboard");
+  }
+
   const demo = isDemoMode();
 
   return (
@@ -51,34 +57,14 @@ export default function LoginPage() {
               ))}
               <p className="pt-2 text-xs leading-5 text-[var(--spm-text-muted)]">
                 Demo authentication uses an isolated server-side session cookie.
-                Production mode uses Supabase Auth.
+                Records are synthetic sample data. HubSpot runs in mock mode.
+                Supabase Auth is not enabled in this prototype.
               </p>
             </div>
           ) : (
             <div className="w-full space-y-3">
-              <label className="block text-sm font-semibold text-[var(--spm-navy)]">
-                Email
-                <input
-                  type="email"
-                  className="mt-1.5 h-12 w-full rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-blue-secondary)]/35"
-                  placeholder="you@superpowermentors.com"
-                  disabled
-                />
-              </label>
-              <label className="block text-sm font-semibold text-[var(--spm-navy)]">
-                Password
-                <input
-                  type="password"
-                  className="mt-1.5 h-12 w-full rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-blue-secondary)]/35"
-                  disabled
-                />
-              </label>
-              <Button type="button" className="h-12 w-full" disabled>
-                Sign in with Supabase
-              </Button>
-              <p className="text-xs text-[var(--spm-text-muted)]">
-                Set APP_MODE=demo for the prototype login experience, or configure
-                Supabase credentials for auth mode.
+              <p className="text-sm text-[var(--spm-text-muted)]">
+                APP_MODE=auth is unavailable. Use APP_MODE=demo.
               </p>
             </div>
           )}

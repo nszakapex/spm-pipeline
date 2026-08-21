@@ -31,7 +31,7 @@ HubSpot sync attempts and failures.
 
 ## Stage vs disposition
 
-**Stage** (primary path): NEW → … → WON / LOST  
+**Stage** (primary path): NEW → … → WON / LOST
 **Disposition** (side state): ACTIVE | NURTURE | NO_RESPONSE | NOT_QUALIFIED | NO_SHOW | INVALID_CONTACT
 
 Example: stage `CALL_BOOKED` + disposition `NO_SHOW`.

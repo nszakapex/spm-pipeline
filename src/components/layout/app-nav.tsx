@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { cn } from "@/lib/utils";
-import { logoutAction } from "@/lib/auth/actions";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -73,7 +72,7 @@ export function AppSidebar({
       <div className="mt-4 rounded-[1.1rem] border border-[rgba(7,22,74,0.08)] bg-[#f8fafd] p-3">
         <p className="text-sm font-semibold text-[var(--spm-navy)]">{userName}</p>
         <p className="truncate text-xs text-[var(--spm-text-muted)]">{userEmail}</p>
-        <form action={logoutAction} className="mt-3">
+        <form action="/api/logout" method="post" className="mt-3">
           <button
             type="submit"
             className="text-xs font-bold text-[var(--spm-blue-secondary)] hover:underline"
@@ -124,13 +123,15 @@ export function MobileTopBar({ title }: { title?: string }) {
       {title ? (
         <span className="text-sm font-semibold text-[var(--spm-navy)]">{title}</span>
       ) : null}
-      <Link
-        href="/settings"
-        className="grid size-10 place-items-center rounded-full text-[var(--spm-navy)]/70"
-        aria-label="Settings"
-      >
-        <Settings className="size-5" />
-      </Link>
+      <div className="flex items-center gap-1">
+        <Link
+          href="/settings"
+          className="grid size-10 place-items-center rounded-full text-[var(--spm-navy)]/70"
+          aria-label="Settings"
+        >
+          <Settings className="size-5" />
+        </Link>
+      </div>
     </div>
   );
 }

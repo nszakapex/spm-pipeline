@@ -6,15 +6,38 @@ Internal sales integrity, pipeline, scoring, and nurture layer that sits on top 
 
 > We are not rebuilding HubSpot. We are making it impossible for Superpower Mentors to lose visibility into a lead between acquisition and close.
 
-## Quick start (demo)
+## Supported runtime (local + Vercel Preview)
+
+| Variable | Required value |
+| --- | --- |
+| `APP_MODE` | `demo` |
+| `HUBSPOT_MODE` | `mock` |
+| `DEMO_SESSION_SECRET` | random secret, **≥ 32 characters** |
+
+**`demo` + `mock` is the only supported deployed combination.**
+
+- Supabase is **not** required for the demo.
+- Supabase Auth mode (`APP_MODE=auth`) is **incomplete and unsupported**.
+- HubSpot is **mocked** — no live CRM credentials or writes.
+- Every displayed record is **synthetic sample data**.
+
+## Local demo setup
 
 ```bash
-npm install
+npm ci
 cp .env.example .env.local
+openssl rand -hex 32
+# Paste the output into .env.local as DEMO_SESSION_SECRET=...
 npm run dev
 ```
 
-Sign in with a demo user on `/login` (`APP_MODE=demo`).
+Open http://localhost:3000 → sign in as **Maya Chen** (or another demo user).
+
+Generate a secret without pasting it into chat or commits:
+
+```bash
+openssl rand -hex 32
+```
 
 ## Scripts
 
@@ -25,6 +48,27 @@ Sign in with a demo user on `/login` (`APP_MODE=demo`).
 | `npm run typecheck` | TypeScript |
 | `npm run lint` | ESLint |
 | `npm test` | Vitest unit tests |
+
+## Vercel Preview settings (proposed)
+
+| Setting | Value |
+| --- | --- |
+| Framework Preset | Next.js |
+| Root Directory | `.` |
+| Node.js Version | `24.x` |
+| Install Command | default (`npm install` / lockfile) |
+| Build Command | default (`npm run build`) |
+| Output Directory | default |
+
+### Preview environment variable **names** (never commit values)
+
+- `APP_MODE`
+- `HUBSPOT_MODE`
+- `DEMO_SESSION_SECRET` (Sensitive)
+
+Do **not** set Supabase or HubSpot credentials for Preview.
+
+Use a **protected Preview** (Vercel Authentication / Standard Protection) before any production decision.
 
 ## Docs
 
@@ -38,10 +82,4 @@ Sign in with a demo user on `/login` (`APP_MODE=demo`).
 
 ## Stack
 
-Next.js App Router · TypeScript strict · Tailwind · selective shadcn-style primitives · Supabase Auth architecture · SQL migrations (no ORM) · HubSpot mock adapter · Vercel-ready
-
-## Modes
-
-- `APP_MODE=demo` — isolated demo session (default)
-- `APP_MODE=auth` — Supabase Auth (requires Supabase env)
-- `HUBSPOT_MODE=mock` — only supported mode in this prototype
+Next.js App Router · TypeScript strict · Tailwind · SQL migrations (no ORM) · HubSpot mock adapter · demo-cookie auth · Vercel-ready

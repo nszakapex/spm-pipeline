@@ -1,9 +1,9 @@
 # SPM Pipeline — Implementation Plan
 
-**Product:** SPM Pipeline  
-**Internal title:** Superpower Mentors — Pipeline Control  
-**Status:** Awaiting approval — no application implementation until approved  
-**Repo state at planning:** Greenfield (`README.md` + `.gitignore` only)  
+**Product:** SPM Pipeline
+**Internal title:** Superpower Mentors — Pipeline Control
+**Status:** Awaiting approval — no application implementation until approved
+**Repo state at planning:** Greenfield (`README.md` + `.gitignore` only)
 **Thesis:** We are not rebuilding HubSpot. We are making it impossible for Superpower Mentors to lose visibility into a lead between acquisition and close.
 
 ---
@@ -470,8 +470,8 @@ Exact production source → HubSpot property mapping remains an open question fo
 
 Sources screen must make gaps obvious:
 
-> Meta reports 41 submissions.  
-> 40 leads accounted for.  
+> Meta reports 41 submissions.
+> 40 leads accounted for.
 > **1 lead potentially missing.**
 
 Implementation: compare `source_submissions` count vs matched leads / HubSpot-synced records for a period, surface `unmatched` + `failed` with drill-down.
@@ -536,7 +536,7 @@ Recompute on: new activity, stage change, meeting status change, source attribut
 
 ### Recommendation: stages + dispositions (not one flat list)
 
-**Primary stage** = where the lead sits on the enrollment path.  
+**Primary stage** = where the lead sits on the enrollment path.
 **Disposition** = side operating mode / outcome qualifier.
 
 This is cleaner than stuffing `NURTURE`, `NO_RESPONSE`, and `NOT_QUALIFIED` into the same ordered kanban as `WON`.
@@ -774,7 +774,7 @@ Public site uses Inter. User frontend rules caution against default Inter for gr
 
 - Fictional only; never claim real SPM customers
 - No permanent loud DEMO banner
-- Subtle Settings disclosure / tooltip:  
+- Subtle Settings disclosure / tooltip:
   **“Prototype environment — customer records shown here are sample data.”**
 - Realistic names, imperfect timestamps, messy ops problems baked in
 
@@ -925,13 +925,13 @@ Must learn from SPM before any **live** integration:
 14. Authorized logo/brand package for internal software distribution
 15. Data retention expectations for sales notes
 
-**Risk:** Building hard-coupled stage names before HubSpot mapping is known.  
+**Risk:** Building hard-coupled stage names before HubSpot mapping is known.
 **Mitigation:** mapping table + adapter; UI uses SPM canonical stages.
 
-**Risk:** Accidental clinical data leakage via HubSpot property sync.  
+**Risk:** Accidental clinical data leakage via HubSpot property sync.
 **Mitigation:** allowlist mapper; privacy review.
 
-**Risk:** Prototype mistaken for live CRM.  
+**Risk:** Prototype mistaken for live CRM.
 **Mitigation:** mock mode + Settings disclosure + fictional seed.
 
 ---

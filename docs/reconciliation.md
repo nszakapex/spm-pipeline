@@ -6,8 +6,8 @@ Marketing platforms and forms produce **source events**. HubSpot holds CRM conta
 
 SPM Pipeline makes the gap visible:
 
-> Meta reports 41 submissions.  
-> 40 are accounted for.  
+> Meta reports 41 submissions.
+> 40 are accounted for.
 > **1 potentially missing.**
 
 ## Model

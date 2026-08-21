@@ -17,15 +17,22 @@ Shared: auth, database model, canonical leads, source events, timelines, scoring
 
 | Variable | Values | Behavior |
 | --- | --- | --- |
-| `APP_MODE` | `demo` (default), `auth` | Demo uses signed httpOnly session cookie. Auth uses Supabase Auth architecture. |
-| `HUBSPOT_MODE` | `mock` only in this prototype | Live mode throws; no credentials requested. |
+| `APP_MODE` | `demo` only (supported) | Signed HttpOnly demo session cookie. `auth` throws — Supabase Auth is unimplemented. |
+| `HUBSPOT_MODE` | `mock` only | Live mode throws; no credentials requested. |
+| `DEMO_SESSION_SECRET` | ≥ 32 chars | Required for local/.env.local and all Vercel runtimes. No production-capable default. |
 
 Demo auth is isolated in `src/lib/auth/*` and must never become an insecure production fallback.
 
+## Route protection
+
+- `src/proxy.ts` — Next.js 16 Proxy (replaces deprecated Middleware). Optimistic redirects after **HMAC verification** of the demo cookie. Does not treat cookie presence or `sb-*` cookies as authentication.
+- `src/app/(app)/layout.tsx` — **authorization boundary** via `getSessionUser()`.
+- Valid users visiting `/login` are redirected by the login page after verified session lookup (avoids invalid-cookie redirect loops).
+
 ## Data access
 
-- SQL migrations in `supabase/migrations` (no ORM).
-- Prototype serves a seeded in-memory store via `src/lib/db/store.ts` so the demo runs without live Supabase.
+- SQL migrations in `supabase/migrations` (no ORM) — reference schema only for a future pilot.
+- Runtime `getStore()` always serves the in-memory seeded dataset. No Supabase, SQL, or network data plane in demo mode.
 - Types live in `src/types/domain.ts`.
 
 ## Integration boundary
@@ -33,10 +40,10 @@ Demo auth is isolated in `src/lib/auth/*` and must never become an insecure prod
 ```text
 UI / server pages
   → domain libs (scoring, nurture flags, reconciliation, analytics)
-  → integrations/hubspot/* (mock client)
+  → integrations/hubspot/* (mock client — no HTTP)
 ```
 
-UI never calls HubSpot directly.
+UI never calls HubSpot directly. Demo runtime does not contact Supabase or HubSpot.
 
 ## Key domain modules
 
@@ -44,3 +51,4 @@ UI never calls HubSpot directly.
 - `src/lib/nurture/flags.ts` — SLA / at-risk rules
 - `src/lib/integrity/reconciliation.ts` — source integrity + pipeline health
 - `src/integrations/hubspot/*` — mock adapter
+- `src/lib/auth/demo-token.ts` — HMAC demo session tokens
