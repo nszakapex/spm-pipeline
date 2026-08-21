@@ -2,7 +2,7 @@ import type { NextActionType } from "@/types/domain";
 import type { CallAnalysis, CallOutcome, ReplyAnalysis, ReplyIntent } from "./types";
 
 const BOOK_RE = /\b(book|schedule|jake|strategy call|available|set up a call)\b/i;
-const ENROLL_RE = /\b(enroll|tuition|start date|how much|pricing|cost)\b/i;
+const ENROLL_RE = /\b(enroll\w*|tuition|start date|how much|pricing|cost)\b/i;
 const NO_RE = /\b(not interested|no thanks|unsubscribe|stop texting|remove me)\b/i;
 const LATER_RE = /\b(next year|later|not now|too busy|in the fall|maybe later)\b/i;
 const CONFIRM_RE = /\b(confirm|see you|we'?ll be there|on my calendar)\b/i;

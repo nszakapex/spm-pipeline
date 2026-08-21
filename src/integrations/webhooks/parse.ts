@@ -91,6 +91,14 @@ function hubspotType(raw: Record<string, unknown>): CanonicalIngestEventType {
   return "contact.updated";
 }
 
+function qualificationOf(
+  value: unknown,
+): "qualified" | "not_qualified" | undefined {
+  const parsed = str(value);
+  if (parsed === "qualified" || parsed === "not_qualified") return parsed;
+  return undefined;
+}
+
 function objectIdFor(
   raw: Record<string, unknown>,
   type: CanonicalIngestEventType,
@@ -143,10 +151,7 @@ export function parseHubSpotWebhookPayload(json: unknown): CanonicalIngestEvent[
         leadStatus: str(raw.hs_lead_status) ?? str(raw.leadStatus),
       },
       jakeReady: raw.jakeReady === true,
-      qualification:
-        str(raw.qualification) === "qualified" || str(raw.qualification) === "not_qualified"
-          ? str(raw.qualification)
-          : undefined,
+      qualification: qualificationOf(raw.qualification),
     };
   });
 }
