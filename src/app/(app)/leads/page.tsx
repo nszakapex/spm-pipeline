@@ -85,11 +85,11 @@ export default async function LeadsPage({
             name="q"
             defaultValue={params.q ?? ""}
             placeholder="Search name, email, phone"
-            className="h-11 flex-1 rounded-md border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-blue-secondary)]/35"
+            className="h-11 flex-1 rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-blue-secondary)]/35"
           />
           <button
             type="submit"
-            className="h-11 rounded-md bg-[var(--spm-blue-primary)] px-5 text-sm font-semibold text-white"
+            className="h-11 rounded-full bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] px-5 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(28,72,230,0.18)]"
           >
             Search
           </button>

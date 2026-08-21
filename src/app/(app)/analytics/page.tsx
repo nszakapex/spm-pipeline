@@ -64,7 +64,7 @@ export default function AnalyticsPage() {
               </span>
               <div className="h-3 overflow-hidden rounded-full bg-[#e8eef8]">
                 <div
-                  className="h-full rounded-full bg-[var(--spm-blue-primary)]"
+                  className="h-full rounded-full bg-gradient-to-r from-[var(--spm-sky)] to-[var(--spm-blue-primary)]"
                   style={{ width: `${(step.count / max) * 100}%` }}
                 />
               </div>
