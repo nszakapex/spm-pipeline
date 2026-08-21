@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+:root {
+  --spm-blue-primary: #1c48e6;
+  --spm-blue-secondary: #2f6fc4;
+  --spm-navy: #07164a;
+  --spm-text-muted: #4b5875;
+  --spm-cream: #faf6ee;
+  --spm-gold: #e8bd36;
+  --spm-sky: #4f9dff;
+  --spm-deep-blue: #163a8a;
+  --spm-sand: #e8e1d7;
+  --spm-app-bg: #f4f7fc;
+  --spm-success: #0c7f79;
+  --spm-warning: #b8901f;
+  --spm-danger: #c23b4a;
+  --spm-border: rgba(7, 22, 74, 0.1);
+  --spm-radius: 1.25rem;
+  --background: var(--spm-app-bg);
+  --foreground: var(--spm-navy);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-spm-primary: var(--spm-blue-primary);
+  --color-spm-secondary: var(--spm-blue-secondary);
+  --color-spm-navy: var(--spm-navy);
+  --color-spm-muted: var(--spm-text-muted);
+  --color-spm-cream: var(--spm-cream);
+  --color-spm-gold: var(--spm-gold);
+  --color-spm-sky: var(--spm-sky);
+  --color-spm-danger: var(--spm-danger);
+  --color-spm-success: var(--spm-success);
+  --color-spm-warning: var(--spm-warning);
+  --font-sans: Inter, "Avenir Next", ui-sans-serif, system-ui, sans-serif;
+  --radius-spm: var(--spm-radius);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(79, 157, 255, 0.16), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgba(232, 189, 54, 0.12), transparent 45%),
+    var(--spm-app-bg);
+  color: var(--spm-navy);
+  font-family: Inter, "Avenir Next", ui-sans-serif, system-ui, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--spm-blue-secondary) 25%, white);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.35s ease-out both;
+}
+
+.spm-panel {
+  border: 1px solid var(--spm-border);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 50px -46px rgba(7, 22, 74, 0.28);
+}
+
+.spm-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(7, 22, 74, 0.2) transparent;
+}

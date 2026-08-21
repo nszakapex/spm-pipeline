@@ -1,0 +1,48 @@
+import Link from "next/link";
+import { brandTokens } from "@/lib/brand-tokens";
+import { cn } from "@/lib/utils";
+
+export function BrandMark({
+  className,
+  showWordmark = true,
+}: {
+  className?: string;
+  showWordmark?: boolean;
+}) {
+  return (
+    <Link href="/dashboard" className={cn("flex items-center gap-3", className)}>
+      {/* Public SPM mark SVG — not redrawn */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={brandTokens.assets.logoMark}
+        alt=""
+        width={28}
+        height={28}
+        className="shrink-0"
+      />
+      {showWordmark ? (
+        <span className="min-w-0">
+          <span className="block text-[0.95rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
+            {brandTokens.name.product}
+          </span>
+          <span className="block truncate text-[11px] font-medium text-[var(--spm-text-muted)]">
+            Pipeline Control
+          </span>
+        </span>
+      ) : null}
+    </Link>
+  );
+}
+
+export function BrandBanner({ className }: { className?: string }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={brandTokens.assets.logoBanner}
+      alt={brandTokens.name.org}
+      width={180}
+      height={32}
+      className={cn("h-8 w-auto", className)}
+    />
+  );
+}

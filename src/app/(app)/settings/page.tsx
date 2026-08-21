@@ -1,0 +1,145 @@
+import {
+  Panel,
+  PanelDescription,
+  PanelHeader,
+  PanelTitle,
+} from "@/components/ui/panel";
+import { getEnv, isDemoMode } from "@/lib/env";
+import { DEFAULT_SLA, STAGE_LABELS } from "@/types/domain";
+import { SCORE_VERSION } from "@/lib/scoring/score-lead";
+
+export const metadata = { title: "Settings" };
+
+export default function SettingsPage() {
+  const env = getEnv();
+
+  return (
+    <div className="space-y-6 animate-fade-up">
+      <header>
+        <h1 className="text-[1.85rem] font-semibold tracking-[-0.03em] text-[var(--spm-navy)]">
+          Settings
+        </h1>
+        <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
+          Prototype configuration and operational defaults.
+        </p>
+      </header>
+
+      <Panel>
+        <PanelHeader>
+          <div>
+            <PanelTitle>Prototype information</PanelTitle>
+            <PanelDescription>
+              Prototype environment — customer records shown here are sample
+              data.
+            </PanelDescription>
+          </div>
+        </PanelHeader>
+        <dl className="grid gap-3 px-5 pb-5 text-sm sm:grid-cols-2">
+          <div>
+            <dt className="text-[var(--spm-text-muted)]">App mode</dt>
+            <dd className="font-semibold">{env.APP_MODE}</dd>
+          </div>
+          <div>
+            <dt className="text-[var(--spm-text-muted)]">HubSpot mode</dt>
+            <dd className="font-semibold">{env.HUBSPOT_MODE} (mock only)</dd>
+          </div>
+          <div>
+            <dt className="text-[var(--spm-text-muted)]">Auth</dt>
+            <dd className="font-semibold">
+              {isDemoMode()
+                ? "Demo session cookie (isolated from production Auth)"
+                : "Supabase Auth"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[var(--spm-text-muted)]">Scoring version</dt>
+            <dd className="font-semibold">{SCORE_VERSION}</dd>
+          </div>
+        </dl>
+      </Panel>
+
+      <Panel id="pipeline-health">
+        <PanelHeader>
+          <div>
+            <PanelTitle>Pipeline health formula</PanelTitle>
+            <PanelDescription>
+              Transparent weighted violation score across active leads and source
+              reconciliation.
+            </PanelDescription>
+          </div>
+        </PanelHeader>
+        <ul className="list-disc space-y-1 px-8 pb-5 text-sm text-[var(--spm-text-muted)]">
+          <li>Missing source attribution — weight 20</li>
+          <li>No owner — weight 20</li>
+          <li>No next action — weight 20</li>
+          <li>First-contact SLA breach — weight 15</li>
+          <li>Stale stage — weight 10</li>
+          <li>Integration failure — weight 10</li>
+          <li>Unmatched/failed source events (14-day window) — weight 5</li>
+        </ul>
+        <p className="px-5 pb-5 text-sm text-[var(--spm-text-muted)]">
+          Health % = 100 − Σ(violation rate × weight).
+        </p>
+      </Panel>
+
+      <Panel>
+        <PanelHeader>
+          <div>
+            <PanelTitle>Scoring rules summary</PanelTitle>
+          </div>
+        </PanelHeader>
+        <ul className="space-y-1 px-5 pb-5 text-sm text-[var(--spm-text-muted)]">
+          <li>Intent — up to 40</li>
+          <li>Engagement — up to 30</li>
+          <li>Readiness — up to 20</li>
+          <li>Source quality — up to 10</li>
+          <li>Negative adjustments for no-response, no-interest, invalid contact, etc.</li>
+          <li>Bands: 80–100 P1 Hot · 60–79 P2 High · 40–59 P3 Nurture · 0–39 P4 Low</li>
+        </ul>
+      </Panel>
+
+      <Panel>
+        <PanelHeader>
+          <div>
+            <PanelTitle>SLA settings (demo)</PanelTitle>
+          </div>
+        </PanelHeader>
+        <dl className="grid gap-3 px-5 pb-5 text-sm sm:grid-cols-2">
+          <div>
+            <dt className="text-[var(--spm-text-muted)]">First contact SLA</dt>
+            <dd className="font-semibold">{DEFAULT_SLA.firstContactHours} hours</dd>
+          </div>
+          <div>
+            <dt className="text-[var(--spm-text-muted)]">Reconciliation threshold</dt>
+            <dd className="font-semibold">
+              {DEFAULT_SLA.reconciliationHours} hours
+            </dd>
+          </div>
+        </dl>
+        <div className="px-5 pb-5 text-sm text-[var(--spm-text-muted)]">
+          Stale stage thresholds (days):{" "}
+          {Object.entries(DEFAULT_SLA.staleStageDays)
+            .filter(([k]) => !["WON", "LOST"].includes(k))
+            .map(([k, v]) => `${STAGE_LABELS[k as keyof typeof STAGE_LABELS]} ${v}d`)
+            .join(" · ")}
+        </div>
+      </Panel>
+
+      <Panel>
+        <PanelHeader>
+          <div>
+            <PanelTitle>Pipeline stages</PanelTitle>
+          </div>
+        </PanelHeader>
+        <p className="px-5 pb-5 text-sm text-[var(--spm-text-muted)]">
+          NEW → ATTEMPTING_CONTACT → CONNECTED → QUALIFIED → JAKE_READY →
+          CALL_BOOKED → CALL_HELD → ENROLLMENT_PENDING → WON / LOST
+        </p>
+        <p className="px-5 pb-5 text-sm text-[var(--spm-text-muted)]">
+          Dispositions (separate): ACTIVE · NURTURE · NO_RESPONSE ·
+          NOT_QUALIFIED · NO_SHOW · INVALID_CONTACT
+        </p>
+      </Panel>
+    </div>
+  );
+}
