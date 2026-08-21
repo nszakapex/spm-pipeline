@@ -102,6 +102,24 @@ a {
   background: #edf3ff;
 }
 
+.spm-chip {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  border-radius: var(--spm-radius);
+  border: 1px solid rgba(7, 22, 74, 0.12);
+  background: #fff;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--spm-navy);
+}
+
+.spm-chip-active {
+  border-color: color-mix(in oklab, var(--spm-sky) 55%, white);
+  background: color-mix(in oklab, var(--spm-sky) 18%, white);
+  color: var(--spm-blue-primary);
+}
+
 .spm-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgba(7, 22, 74, 0.2) transparent;

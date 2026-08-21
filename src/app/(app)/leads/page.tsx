@@ -134,11 +134,7 @@ export default async function LeadsPage({
           <Link
             key={f.href}
             href={f.href}
-            className={`shrink-0 rounded-md border px-3 py-1.5 text-sm ${
-              f.active
-                ? "border-[var(--spm-navy)] bg-[var(--spm-navy)] text-white"
-                : "border-[rgba(7,22,74,0.12)] bg-white text-[var(--spm-navy)]"
-            }`}
+            className={`spm-chip ${f.active ? "spm-chip-active" : ""}`}
           >
             {f.label}
           </Link>

@@ -53,11 +53,7 @@ export default async function PipelinePage({
             <Link
               key={c.stage}
               href={`/pipeline?stage=${c.stage}`}
-              className={`shrink-0 rounded-md border px-3 py-1.5 text-sm ${
-                mobileStage === c.stage
-                  ? "border-[var(--spm-navy)] bg-[var(--spm-navy)] text-white"
-                  : "border-[rgba(7,22,74,0.12)] bg-white text-[var(--spm-navy)]"
-              }`}
+              className={`spm-chip ${mobileStage === c.stage ? "spm-chip-active" : ""}`}
             >
               {STAGE_LABELS[c.stage]} ({c.items.length})
             </Link>
