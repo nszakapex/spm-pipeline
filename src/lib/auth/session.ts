@@ -67,17 +67,17 @@ export async function requireSessionUser(): Promise<SessionUser> {
 export const DEMO_LOGIN_OPTIONS = [
   {
     id: "user_001",
-    label: "Maya Chen (Sales)",
-    email: "maya.chen@example.spm-pipeline.local",
+    label: "Max Sussman (Sales)",
+    email: "max.sussman@example.spm-pipeline.local",
   },
   {
     id: "user_002",
-    label: "Jordan Blake (Sales)",
-    email: "jordan.blake@example.spm-pipeline.local",
+    label: "Mack Ianni (Sales)",
+    email: "mack.ianni@example.spm-pipeline.local",
   },
   {
     id: "user_003",
-    label: "Priya Nair (Admin)",
-    email: "priya.nair@example.spm-pipeline.local",
+    label: "Nate Szakallas (Admin)",
+    email: "nate.szakallas@example.spm-pipeline.local",
   },
 ] as const;

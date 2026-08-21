@@ -45,22 +45,22 @@ export interface DemoDataset {
 const USERS: AppUser[] = [
   {
     id: "user_001",
-    email: "maya.chen@example.spm-pipeline.local",
-    name: "Maya Chen",
+    email: "max.sussman@example.spm-pipeline.local",
+    name: "Max Sussman",
     role: "sales",
     created_at: daysAgo(120),
   },
   {
     id: "user_002",
-    email: "jordan.blake@example.spm-pipeline.local",
-    name: "Jordan Blake",
+    email: "mack.ianni@example.spm-pipeline.local",
+    name: "Mack Ianni",
     role: "sales",
     created_at: daysAgo(90),
   },
   {
     id: "user_003",
-    email: "priya.nair@example.spm-pipeline.local",
-    name: "Priya Nair",
+    email: "nate.szakallas@example.spm-pipeline.local",
+    name: "Nate Szakallas",
     role: "admin",
     created_at: daysAgo(200),
   },
