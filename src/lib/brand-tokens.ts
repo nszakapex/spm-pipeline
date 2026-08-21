@@ -55,10 +55,10 @@ export const brandTokens = {
   },
   radius: {
     /** Ops chrome is square — marketing site radii are not used here */
-    base: "0px",
-    pill: "0px",
-    card: "0px",
-    panel: "0px",
+    base: "0.25rem",
+    pill: "0.25rem",
+    card: "0.25rem",
+    panel: "0.25rem",
   },
   shadow: {
     soft: "0 18px 50px -46px rgba(7, 22, 74, 0.28)",

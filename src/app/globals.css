@@ -14,8 +14,8 @@
   --spm-app-bg: #faf6ee;
   --spm-ok: #1c48e6;
   --spm-flag: #e8bd36;
-  --spm-border: #07164a;
-  --spm-radius: 0px;
+  --spm-border: color-mix(in oklab, var(--spm-navy) 55%, var(--spm-sand));
+  --spm-radius: 0.25rem;
   --background: var(--spm-app-bg);
   --foreground: var(--spm-navy);
 }
@@ -33,12 +33,12 @@
   --color-spm-sand: var(--spm-sand);
   --color-spm-deep: var(--spm-deep-blue);
   --font-sans: Inter, "Avenir Next", ui-sans-serif, system-ui, sans-serif;
-  --radius-spm: 0px;
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
-  --radius-2xl: 0px;
+  --radius-spm: 0.25rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.25rem;
+  --radius-2xl: 0.25rem;
 }
 
 * {
@@ -70,21 +70,28 @@ a {
 }
 
 .spm-panel {
-  border: 2px solid var(--spm-navy);
+  border: 1px solid var(--spm-navy);
   background: #fff;
-  border-radius: 0;
+  border-radius: var(--spm-radius);
 }
 
 .spm-panel-accent {
-  border-top-width: 6px;
+  border-top-width: 4px;
   border-top-color: var(--spm-gold);
 }
 
 .spm-flag {
-  border: 2px solid var(--spm-navy);
-  border-left-width: 6px;
+  border: 1px solid var(--spm-navy);
+  border-left-width: 4px;
   border-left-color: var(--spm-gold);
+  border-radius: var(--spm-radius);
   background: var(--spm-cream);
+}
+
+.spm-card {
+  border: 1px solid var(--spm-border);
+  background: #fff;
+  border-radius: var(--spm-radius);
 }
 
 .spm-table {
@@ -123,8 +130,8 @@ a {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
-  border-radius: 0;
-  border: 2px solid var(--spm-navy);
+  border-radius: var(--spm-radius);
+  border: 1px solid var(--spm-navy);
   background: #fff;
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;

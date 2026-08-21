@@ -19,7 +19,7 @@ export default async function AppLayout({
       <AppSidebar userName={user.name} userEmail={user.email} />
       <div className="flex min-w-0 flex-1 flex-col">
         <MobileTopBar />
-        <div className="border-b-2 border-[var(--spm-gold)] bg-[var(--spm-deep-blue)] px-4 py-1.5 text-[12px] text-[var(--spm-cream)] md:px-6">
+        <div className="border-b border-[var(--spm-gold)] bg-[var(--spm-deep-blue)] px-4 py-1.5 text-[12px] text-[var(--spm-cream)] md:px-6">
           Demo · synthetic data · HubSpot mock
         </div>
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5 pb-24 md:px-6 md:py-6 md:pb-6">

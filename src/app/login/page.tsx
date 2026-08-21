@@ -61,7 +61,7 @@ export default async function LoginPage() {
             </div>
           )}
         </div>
-        <div className="mt-6 flex items-center gap-3 border-t-2 border-[var(--spm-sand)] pt-4">
+        <div className="mt-6 flex items-center gap-3 border-t border-[var(--spm-sand)] pt-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={brandTokens.assets.logoMark}
