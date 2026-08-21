@@ -6,6 +6,10 @@ Internal sales integrity, pipeline, scoring, and nurture layer that sits on top 
 
 > We are not rebuilding HubSpot. We are making it impossible for Superpower Mentors to lose visibility into a lead between acquisition and close.
 
+**Phase 1 (demo hardening) is on this branch:** `cursor/spm-pipeline-mvp-e857`  
+**PR:** https://github.com/nszakapex/spm-pipeline/pull/2  
+**`main` does not include the app or Phase 1.** Checkout this branch (or the PR) to see login, HMAC demo sessions, `src/proxy.ts`, `/api/logout`, and `.env.example`.
+
 ## Supported runtime (local + Vercel Preview)
 
 | Variable | Required value |
