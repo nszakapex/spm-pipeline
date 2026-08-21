@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Panel,
   PanelDescription,
   PanelHeader,
   PanelTitle,
 } from "@/components/ui/panel";
+import { LogActivityForm } from "@/components/leads/log-activity-form";
 import { getLeadFlags } from "@/lib/analytics/queries";
 import { getStore } from "@/lib/db/store";
+import { getEnv } from "@/lib/env";
+import { getSessionUser } from "@/lib/auth/session";
 import {
   DISPOSITION_LABELS,
   SCORE_BAND_LABELS,
@@ -39,6 +41,9 @@ export default async function LeadDetailPage({
   const store = getStore();
   const lead = store.getLead(id);
   if (!lead) notFound();
+  const session = await getSessionUser();
+  const env = getEnv();
+  const jakeMeetingsUrl = env.JAKE_MEETINGS_URL;
 
   const owner = lead.owner_id ? store.getUser(lead.owner_id) : undefined;
   const factors = store
@@ -115,24 +120,14 @@ export default async function LeadDetailPage({
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
-            {["Call", "Email", "Text", "Book", "Add Note", "Schedule Follow-up"].map(
-              (label) => (
-                <Button
-                  key={label}
-                  type="button"
-                  variant={label === "Call" ? "primary" : "secondary"}
-                  size="sm"
-                  disabled
-                  title="Mock action — live outreach not enabled"
-                >
-                  {label}
-                </Button>
-              ),
-            )}
-          </div>
         </div>
       </header>
+
+      <LogActivityForm
+        leadId={lead.id}
+        jakeMeetingsUrl={jakeMeetingsUrl}
+        canWrite={session?.role !== "viewer"}
+      />
 
       <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
         <Panel>
@@ -273,7 +268,11 @@ export default async function LeadDetailPage({
             <PanelHeader>
               <div>
                 <PanelTitle>HubSpot</PanelTitle>
-                <PanelDescription>Mock connector projection</PanelDescription>
+                <PanelDescription>
+                  {env.HUBSPOT_CLIENT_SECRET
+                    ? "Inbound HubSpot v3 signatures are ready"
+                    : "Mock connector — set HUBSPOT_CLIENT_SECRET to accept live HubSpot webhooks"}
+                </PanelDescription>
               </div>
             </PanelHeader>
             <dl className="grid grid-cols-2 gap-3 px-5 pb-5 text-sm">

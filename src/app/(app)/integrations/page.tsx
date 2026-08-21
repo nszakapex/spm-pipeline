@@ -6,6 +6,7 @@ import {
   STAGE_INTEGRATIONS,
   WEBHOOK_CHANNEL_PATHS,
 } from "@/lib/pipeline/stage-integrations";
+import { getWebhookReadiness } from "@/lib/integrations/readiness";
 import { STAGE_LABELS } from "@/types/domain";
 import { formatOpsDate } from "@/lib/utils";
 
@@ -25,17 +26,60 @@ export default async function IntegrationsPage() {
     );
   const failed = syncEvents.filter((e) => e.status === "failed");
   const receipts = store.getIngestReceipts();
+  const ready = getWebhookReadiness();
 
   return (
     <div className="space-y-6">
       <header>
         <h1 className="spm-page-title">Integrations</h1>
         <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
-          HubSpot remains the CRM source of truth. Jake&apos;s calendar is HubSpot
-          Meetings. Webhooks are pre-registered in mock — signed ingest only, no
-          live credentials.
+          Plug in HubSpot when you have the app secret. Until then, mock HMAC and
+          manual call/reply logs still move the pipeline.
         </p>
       </header>
+
+      <section className="spm-panel overflow-hidden">
+        <div className="border-b border-[rgba(7,22,74,0.08)] px-4 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold text-[var(--spm-navy)]">
+              Go-live readiness
+            </h2>
+            <Badge tone={ready.hubspotV3Ready ? "success" : "warning"}>
+              {ready.hubspotV3Ready ? "HubSpot v3 ready" : "Waiting on HubSpot secret"}
+            </Badge>
+          </div>
+        </div>
+        <table className="spm-table">
+          <tbody>
+            <tr>
+              <td className="text-[var(--spm-text-muted)]">Inbound mock HMAC</td>
+              <td className="font-medium text-[var(--spm-navy)]">On — smoke tests</td>
+            </tr>
+            <tr>
+              <td className="text-[var(--spm-text-muted)]">HubSpot v3 signatures</td>
+              <td className="font-medium text-[var(--spm-navy)]">
+                {ready.hubspotV3Ready
+                  ? "On — live HubSpot POSTs accepted"
+                  : "Off — set HUBSPOT_CLIENT_SECRET"}
+              </td>
+            </tr>
+            <tr>
+              <td className="text-[var(--spm-text-muted)]">Jake Meetings link</td>
+              <td className="font-medium text-[var(--spm-navy)]">
+                {ready.jakeMeetingsUrlReady ? "Set" : "Not set — optional JAKE_MEETINGS_URL"}
+              </td>
+            </tr>
+            <tr>
+              <td className="text-[var(--spm-text-muted)]">You still bring</td>
+              <td className="font-medium text-[var(--spm-navy)]">
+                {ready.waitingOnYou.length > 0
+                  ? ready.waitingOnYou.join(" · ")
+                  : "Nothing — paste HubSpot subscriptions to /api/webhooks/hubspot"}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
       <section className="spm-panel overflow-hidden">
         <div className="border-b border-[rgba(7,22,74,0.08)] px-4 py-3">

@@ -20,12 +20,18 @@ const envSchema = z.object({
   APP_MODE: z.enum(["demo", "auth"]).default("demo"),
   HUBSPOT_MODE: z.enum(["mock", "live"]).default("mock"),
   DEMO_SESSION_SECRET: z.string().optional(),
+  HUBSPOT_CLIENT_SECRET: z.string().optional(),
+  JAKE_MEETINGS_URL: z.string().optional(),
 });
 
 export type AppEnv = {
   APP_MODE: "demo";
   HUBSPOT_MODE: "mock";
   DEMO_SESSION_SECRET: string;
+  /** HubSpot app client secret — enables inbound v3 webhook signatures. Not an API token. */
+  HUBSPOT_CLIENT_SECRET: string | null;
+  /** Public HubSpot Meetings link for Jake. Opens from the lead page. */
+  JAKE_MEETINGS_URL: string | null;
 };
 
 function isTestRuntime(): boolean {
@@ -77,11 +83,18 @@ function resolveDemoSessionSecret(raw: string | undefined): string {
   return raw;
 }
 
+function optionalTrimmed(raw: string | undefined): string | null {
+  const value = raw?.trim() ?? "";
+  return value.length > 0 ? value : null;
+}
+
 function readEnv(): AppEnv {
   const parsed = envSchema.safeParse({
     APP_MODE: process.env.APP_MODE ?? "demo",
     HUBSPOT_MODE: process.env.HUBSPOT_MODE ?? "mock",
     DEMO_SESSION_SECRET: process.env.DEMO_SESSION_SECRET,
+    HUBSPOT_CLIENT_SECRET: process.env.HUBSPOT_CLIENT_SECRET,
+    JAKE_MEETINGS_URL: process.env.JAKE_MEETINGS_URL,
   });
 
   if (!parsed.success) {
@@ -108,6 +121,8 @@ function readEnv(): AppEnv {
     APP_MODE: "demo",
     HUBSPOT_MODE: "mock",
     DEMO_SESSION_SECRET,
+    HUBSPOT_CLIENT_SECRET: optionalTrimmed(raw.HUBSPOT_CLIENT_SECRET),
+    JAKE_MEETINGS_URL: optionalTrimmed(raw.JAKE_MEETINGS_URL),
   };
 }
 

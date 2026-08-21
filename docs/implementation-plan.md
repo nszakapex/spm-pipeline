@@ -407,7 +407,7 @@ Signed stub routes exist now. Live HubSpot subscription create and HubSpot v3 si
 - Sales call logged / analyzed
 - Lead email/SMS replies
 
-Webhook receiver authenticates `spm-v1` HMAC signatures, writes ingest receipts + `integration_sync_events`, upserts the in-memory lead overlay, and recomputes score/flags. Polling remains the live fallback later. See `docs/integrations-by-stage.md`.
+Webhook receiver authenticates `spm-v1` HMAC (always) and HubSpot **v3** signatures when `HUBSPOT_CLIENT_SECRET` is set. See `docs/go-live.md`.
 
 ### Mapper philosophy
 

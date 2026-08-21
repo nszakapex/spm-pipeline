@@ -12,6 +12,8 @@ beforeEach(() => {
   process.env.HUBSPOT_MODE = "mock";
   process.env.DEMO_SESSION_SECRET = TEST_ONLY_DEMO_SESSION_SECRET;
   delete process.env.VERCEL;
+  delete process.env.HUBSPOT_CLIENT_SECRET;
+  delete process.env.JAKE_MEETINGS_URL;
   resetEnvCache();
   resetRuntimeStore();
 });

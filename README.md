@@ -52,6 +52,8 @@ openssl rand -hex 32
 | `npm run typecheck` | TypeScript |
 | `npm run lint` | ESLint |
 | `npm test` | Vitest unit tests |
+| `npm run smoke:webhooks` | HubSpot-shaped ingest + manual log + v3 signature smoke |
+| `npm run typecheck` | TypeScript |
 
 ## Vercel Preview settings (proposed)
 
@@ -78,6 +80,7 @@ Use a **protected Preview** (Vercel Authentication / Standard Protection) before
 
 - [Architecture](./docs/architecture.md)
 - [Integrations by stage](./docs/integrations-by-stage.md)
+- [Go live (HubSpot)](./docs/go-live.md)
 - [Brand audit](./docs/brand-audit.md)
 - [Data model](./docs/data-model.md)
 - [Scoring](./docs/scoring.md)

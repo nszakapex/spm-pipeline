@@ -6,5 +6,5 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  return handleSignedWebhookPost(request, mapHubSpotWebhookBody);
+  return handleSignedWebhookPost(request, mapHubSpotWebhookBody, { allowHubSpotV3: true });
 }

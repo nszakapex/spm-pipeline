@@ -109,6 +109,15 @@ export const PRE_REGISTERED_WEBHOOKS: WebhookSubscriptionSpec[] = [
     purpose: "New HubSpot contact → SPM lead + first-contact SLA",
   },
   {
+    id: "hs_contact_identity",
+    channel: "hubspot",
+    path: "/api/webhooks/hubspot",
+    providerEvent: "contact.propertyChange:email,phone,firstname,lastname",
+    canonicalType: "contact.updated",
+    stages: "any",
+    purpose: "Identity fields after contact.creation (creation payloads have no email)",
+  },
+  {
     id: "hs_contact_lifecycle",
     channel: "hubspot",
     path: "/api/webhooks/hubspot",

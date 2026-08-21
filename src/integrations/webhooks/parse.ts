@@ -27,7 +27,10 @@ function asEvents(json: unknown): Record<string, unknown>[] {
 function occurredAt(raw: Record<string, unknown>): string {
   const iso = str(raw.occurredAt) ?? str(raw.occurred_at);
   if (iso) return iso;
-  if (typeof raw.occurredAt === "number") return new Date(raw.occurredAt).toISOString();
+  if (typeof raw.occurredAt === "number") {
+    const ms = raw.occurredAt < 1e12 ? raw.occurredAt * 1000 : raw.occurredAt;
+    return new Date(ms).toISOString();
+  }
   return new Date().toISOString();
 }
 
@@ -115,24 +118,38 @@ export function parseHubSpotWebhookPayload(json: unknown): CanonicalIngestEvent[
   return asEvents(json).map((raw) => {
     const type = hubspotType(raw);
     const meetingStatus = meetingFromType(type);
+    const property = (str(raw.propertyName) ?? "").toLowerCase();
+    const propertyValue = str(raw.propertyValue);
     return {
       channel: "hubspot" as IngestChannel,
       type,
       externalEventId: externalId(raw, "hs"),
       occurredAt: occurredAt(raw),
       identity: {
-        email: str(raw.email) ?? str(raw.contactEmail),
-        phone: str(raw.phone),
-        firstName: str(raw.firstName) ?? str(raw.firstname),
-        lastName: str(raw.lastName) ?? str(raw.lastname),
+        email:
+          (property === "email" ? propertyValue : undefined) ??
+          str(raw.email) ??
+          str(raw.contactEmail),
+        phone: (property === "phone" ? propertyValue : undefined) ?? str(raw.phone),
+        firstName:
+          (property === "firstname" ? propertyValue : undefined) ??
+          str(raw.firstName) ??
+          str(raw.firstname),
+        lastName:
+          (property === "lastname" ? propertyValue : undefined) ??
+          str(raw.lastName) ??
+          str(raw.lastname),
         hubspotContactId:
           str(raw.contactId) ??
           str(raw.hubspotContactId) ??
-          (type.startsWith("contact") ? objectIdFor(raw, type) : undefined),
+          (type.startsWith("contact") || type.startsWith("meeting")
+            ? objectIdFor(raw, type)
+            : undefined),
         hubspotDealId:
           str(raw.dealId) ?? (type.startsWith("deal") ? objectIdFor(raw, type) : undefined),
         leadId: str(raw.leadId),
-        ownerId: str(raw.ownerId),
+        ownerId:
+          (property === "hubspot_owner_id" ? propertyValue : undefined) ?? str(raw.ownerId),
       },
       payloadSummary: {
         subscriptionType: str(raw.subscriptionType) ?? str(raw.event) ?? null,
@@ -145,10 +162,20 @@ export function parseHubSpotWebhookPayload(json: unknown): CanonicalIngestEvent[
         objectType: str(raw.objectType) ?? type.split(".")[0] ?? "contact",
         objectId: objectIdFor(raw, type) ?? str(raw.contactId) ?? null,
         propertyName: str(raw.propertyName),
-        propertyValue: str(raw.propertyValue),
-        lifecycleStage: str(raw.lifecyclestage) ?? str(raw.lifecycleStage),
-        dealStage: str(raw.dealStage) ?? str(raw.dealstage) ?? str(raw.propertyValue),
-        leadStatus: str(raw.hs_lead_status) ?? str(raw.leadStatus),
+        propertyValue,
+        lifecycleStage:
+          (property === "lifecyclestage" ? propertyValue : undefined) ??
+          str(raw.lifecyclestage) ??
+          str(raw.lifecycleStage),
+        dealStage:
+          (property === "dealstage" ? propertyValue : undefined) ??
+          str(raw.dealStage) ??
+          str(raw.dealstage) ??
+          (type.startsWith("deal") ? propertyValue : undefined),
+        leadStatus:
+          (property === "hs_lead_status" ? propertyValue : undefined) ??
+          str(raw.hs_lead_status) ??
+          str(raw.leadStatus),
       },
       jakeReady: raw.jakeReady === true,
       qualification: qualificationOf(raw.qualification),

@@ -57,4 +57,5 @@ Inbound events use pre-registered routes under `/api/webhooks/*` (HMAC `spm-v1`)
 - `src/lib/pipeline/apply-ingest.ts` — webhook → stage / next action / score
 - `src/integrations/hubspot/*` — mock adapter + webhook mapper
 - `src/integrations/webhooks/*` — signature, parse, ingest
+- `src/integrations/hubspot/signature.ts` — HubSpot v3 HMAC (ready when client secret is set)
 - `src/lib/auth/demo-token.ts` — HMAC demo session tokens

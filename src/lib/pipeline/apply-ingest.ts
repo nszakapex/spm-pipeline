@@ -506,6 +506,8 @@ export function applyCanonicalEvent(
   if (event.identity.hubspotDealId) lead.hubspot_deal_id = event.identity.hubspotDealId;
   if (event.identity.email) lead.email = event.identity.email;
   if (event.identity.phone) lead.phone = event.identity.phone;
+  if (event.identity.firstName) lead.first_name = event.identity.firstName;
+  if (event.identity.lastName) lead.last_name = event.identity.lastName;
 
   maybeQualify(lead, event);
 

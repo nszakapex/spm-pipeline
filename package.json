@@ -12,7 +12,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "smoke:webhooks": "vitest run tests/unit/webhook-smoke.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
