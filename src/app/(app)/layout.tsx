@@ -15,17 +15,27 @@ export default async function AppLayout({
   if (!user) redirect("/login");
 
   return (
-    <div className="flex min-h-screen">
-      <AppSidebar userName={user.name} userEmail={user.email} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <MobileTopBar />
-        <div className="border-b border-[var(--spm-gold)] bg-[var(--spm-deep-blue)] px-4 py-1.5 text-[12px] text-[var(--spm-cream)] md:px-6">
-          Demo · synthetic data · HubSpot mock
+    <div className="spm-stage">
+      <div className="spm-window">
+        <div className="spm-titlebar">
+          <span className="spm-traffic" aria-hidden>
+            <i />
+            <i />
+            <i />
+          </span>
+          <span className="spm-titlebar-label">SPM Pipeline</span>
+          <span className="spm-titlebar-meta">Demo · HubSpot mock</span>
         </div>
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5 pb-24 md:px-6 md:py-6 md:pb-6">
-          {children}
-        </main>
-        <MobileBottomNav />
+        <div className="spm-window-body">
+          <AppSidebar userName={user.name} userEmail={user.email} />
+          <div className="flex min-w-0 flex-1 flex-col">
+            <MobileTopBar />
+            <main className="spm-well mx-auto w-full max-w-7xl flex-1 animate-fade-up px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-8">
+              {children}
+            </main>
+            <MobileBottomNav />
+          </div>
+        </div>
       </div>
     </div>
   );

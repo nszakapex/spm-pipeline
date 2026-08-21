@@ -16,7 +16,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">
+        <h1 className="spm-page-title">
           Settings
         </h1>
         <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
@@ -35,7 +35,7 @@ export default function SettingsPage() {
           <form action="/api/logout" method="post">
             <button
               type="submit"
-              className="inline-flex h-10 items-center justify-center rounded-[var(--spm-radius)] border border-[var(--spm-navy)] bg-white px-4 text-sm font-medium text-[var(--spm-navy)] hover:bg-[var(--spm-cream)]"
+              className="inline-flex h-11 items-center justify-center rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-5 text-sm font-semibold text-[var(--spm-navy)] shadow-[inset_0_1px_0_#fff] hover:bg-[#f7f9ff]"
             >
               Sign out
             </button>

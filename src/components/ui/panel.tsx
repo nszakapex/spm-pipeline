@@ -27,7 +27,7 @@ export function PanelTitle({
   return (
     <h2
       className={cn(
-        "text-[0.95rem] font-semibold text-[var(--spm-navy)]",
+        "text-[1.05rem] font-semibold tracking-[-0.02em] text-[var(--spm-navy)]",
         className,
       )}
       {...props}

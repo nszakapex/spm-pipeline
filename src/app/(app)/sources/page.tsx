@@ -40,7 +40,7 @@ export default async function SourcesPage({
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">Sources</h1>
+        <h1 className="spm-page-title">Sources</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--spm-text-muted)]">
           Submissions vs CRM representation. Open a source to see unmatched
           events.

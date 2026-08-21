@@ -5,9 +5,11 @@ import { cn } from "@/lib/utils";
 export function BrandMark({
   className,
   showWordmark = true,
+  tone = "dark",
 }: {
   className?: string;
   showWordmark?: boolean;
+  tone?: "dark" | "light";
 }) {
   return (
     <Link href="/dashboard" className={cn("flex items-center gap-3", className)}>
@@ -22,10 +24,20 @@ export function BrandMark({
       />
       {showWordmark ? (
         <span className="min-w-0">
-          <span className="block text-sm font-semibold text-[var(--spm-navy)]">
+          <span
+            className={cn(
+              "block text-sm font-semibold tracking-[-0.03em]",
+              tone === "light" ? "text-white" : "text-[var(--spm-navy)]",
+            )}
+          >
             {brandTokens.name.product}
           </span>
-          <span className="block truncate text-[11px] font-medium text-[var(--spm-text-muted)]">
+          <span
+            className={cn(
+              "block truncate text-[11px] font-medium",
+              tone === "light" ? "text-white/65" : "text-[var(--spm-text-muted)]",
+            )}
+          >
             Pipeline Control
           </span>
         </span>

@@ -39,7 +39,7 @@ export default async function PipelinePage({
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">Pipeline</h1>
+        <h1 className="spm-page-title">Pipeline</h1>
         <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
           Open stages only. Disposition (nurture, no-show, etc.) is on each
           card, not a separate column.

@@ -64,7 +64,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">Dashboard</h1>
+        <p className="spm-kicker">Pipeline Control</p>
+        <h1 className="spm-page-title mt-2">Dashboard</h1>
         <p className="mt-1 max-w-2xl text-sm text-[var(--spm-text-muted)]">
           Queue load and assignment gaps. HubSpot stays the CRM; this page shows
           what still needs a next step.

@@ -68,7 +68,7 @@ export default async function LeadDetailPage({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">
+              <h1 className="text-[1.9rem] font-semibold tracking-[-0.04em] text-[var(--spm-navy)]">
                 {lead.first_name} {lead.last_name}
               </h1>
               <Badge

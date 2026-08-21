@@ -107,7 +107,7 @@ export default async function LeadsPage({
     <div className="space-y-5">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-[var(--spm-navy)]">Leads</h1>
+          <h1 className="spm-page-title">Leads</h1>
           <p className="mt-1 text-sm text-[var(--spm-text-muted)]">
             {leads.length} records
             {params.risk ? ` · ${params.risk.replaceAll("_", " ")}` : ""}
@@ -118,11 +118,11 @@ export default async function LeadsPage({
             name="q"
             defaultValue={params.q ?? ""}
             placeholder="Search name, email, phone"
-            className="h-10 flex-1 rounded-[var(--spm-radius)] border border-[var(--spm-navy)] bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-sky)]"
+            className="h-11 flex-1 rounded-full border border-[rgba(7,22,74,0.12)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--spm-sky)]/40"
           />
           <button
             type="submit"
-            className="h-10 bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] px-4 text-sm font-medium text-white"
+            className="h-11 rounded-full bg-gradient-to-b from-[var(--spm-sky)] to-[var(--spm-blue-primary)] px-5 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_10px_22px_rgba(28,72,230,0.28)]"
           >
             Search
           </button>
