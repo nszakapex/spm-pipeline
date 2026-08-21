@@ -36,6 +36,10 @@ export default async function AppLayout({
             <MobileBottomNav />
           </div>
         </div>
+        <div className="spm-statusbar">
+          <span>Pipeline Control</span>
+          <span>Demo · HubSpot mock</span>
+        </div>
       </div>
     </div>
   );

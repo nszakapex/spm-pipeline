@@ -87,8 +87,8 @@ export function AppSidebar({
 export function MobileBottomNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0b1020]/92 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-xl md:hidden">
-      <ul className="grid grid-cols-5 gap-1">
+    <nav className="spm-dock md:hidden" aria-label="Primary">
+      <ul className="grid grid-cols-5 gap-1 px-1 pt-1.5">
         {MOBILE_PRIMARY.map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -98,13 +98,13 @@ export function MobileBottomNav() {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-semibold",
+                  "flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg text-[11px] font-semibold",
                   active
-                    ? "text-[var(--spm-sky)]"
-                    : "text-white/55",
+                    ? "bg-white/15 text-[var(--spm-sky)] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]"
+                    : "text-white",
                 )}
               >
-                <Icon className="size-5" />
+                <Icon className="size-6 drop-shadow-[0_1px_1px_rgba(0,0,0,0.65)]" />
                 {item.label}
               </Link>
             </li>
