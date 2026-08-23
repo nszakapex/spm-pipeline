@@ -46,7 +46,7 @@ function NavLink({
       className={cn(
         "flex items-center gap-3 rounded-[7px] px-3 py-2 text-[13px] font-semibold",
         active
-          ? "bg-[var(--spm-blue-primary)] text-white"
+          ? "bg-[#e8f1ff] text-[var(--spm-blue-primary)]"
           : "text-[var(--spm-navy)]/80 hover:bg-[rgba(7,22,74,0.04)]",
       )}
     >
