@@ -3,11 +3,9 @@ import { Button } from "@/components/ui/button";
 
 export function LogActivityForm({
   leadId,
-  jakeMeetingsUrl,
   canWrite,
 }: {
   leadId: string;
-  jakeMeetingsUrl: string | null;
   canWrite: boolean;
 }) {
   return (
@@ -67,23 +65,6 @@ export function LogActivityForm({
       ) : (
         <p className="mt-3 text-sm text-[var(--spm-text-muted)]">View only.</p>
       )}
-      <div className="mt-4 border-t border-[rgba(7,22,74,0.08)] pt-4">
-        {jakeMeetingsUrl ? (
-          <a
-            href={jakeMeetingsUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-sm font-semibold text-[var(--spm-blue-primary)] hover:underline"
-          >
-            Open Jake&apos;s HubSpot Meetings link
-          </a>
-        ) : (
-          <p className="text-sm text-[var(--spm-text-muted)]">
-            Booking Jake: set <code>JAKE_MEETINGS_URL</code>, then send that
-            link. When they pick a time, HubSpot updates this lead.
-          </p>
-        )}
-      </div>
     </section>
   );
 }

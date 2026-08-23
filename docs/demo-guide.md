@@ -26,13 +26,11 @@ Open http://localhost:3000 and sign in as **Max Sussman** (Sales), **Mack Ianni*
 
 ## Story to present
 
-1. **Marketing generates leads** — multiple sources feed `lead_source_events`.
-2. **Source Integrity proves they arrived** — open **Sources**. Select Meta / Instagram. Show 41 vs 40 and the unmatched event.
-3. **Pipeline Control identifies action** — **Dashboard** Needs Attention + Priority Leads.
-4. **Scoring prioritizes humans** — open Sarah Thompson (`/leads/lead_001`); walk **Why this score?**
-5. **Nurture prevents “not now” from becoming lost** — **Nurture** queues.
-6. **Jake-ready creates a clean handoff** — filter Jake Ready / pipeline column. **Integrations** shows HubSpot + Jake's HubSpot Meetings calendar by stage.
-7. **Funnel analytics show what converts** — **Analytics** source comparison.
+1. **Max signs in** — sales nav is Home, Leads, Nurture, Pipeline. Sources, Analytics, Integrations, and Settings stay under Admin.
+2. **Home is one queue** — **Work next** lists about ten unique people, reply-first.
+3. **Open Sarah Thompson** (`/leads/lead_001`) — **Next Action** sits under her name; log the result after you do it. No environment-variable copy.
+4. **Nurture does not repeat people** — Sarah appears once under Needs reply; overdue/due today stay as flags.
+5. **Nate opens Admin** — Sources, Analytics, Integrations, and Settings. Integrations still holds webhook routes and secrets.
 
 ## Auth notes
 

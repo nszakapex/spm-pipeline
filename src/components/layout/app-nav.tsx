@@ -6,6 +6,7 @@ import {
   BarChart3,
   Cable,
   ClipboardList,
+  Ellipsis,
   LayoutDashboard,
   Radio,
   Settings,
@@ -13,60 +14,91 @@ import {
   Sprout,
 } from "lucide-react";
 import { BrandMark } from "@/components/brand/brand-mark";
+import { desktopNavForRole, mobilePrimaryNavForRole, type NavHref } from "@/lib/nav/items";
+import type { UserRole } from "@/types/domain";
 import { cn } from "@/lib/utils";
 
-const NAV = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/sources", label: "Sources", icon: Radio },
-  { href: "/leads", label: "Leads", icon: Users },
-  { href: "/pipeline", label: "Pipeline", icon: ClipboardList },
-  { href: "/nurture", label: "Nurture", icon: Sprout },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/integrations", label: "Integrations", icon: Cable },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
+const ICONS: Record<NavHref, typeof LayoutDashboard> = {
+  "/dashboard": LayoutDashboard,
+  "/leads": Users,
+  "/nurture": Sprout,
+  "/pipeline": ClipboardList,
+  "/sources": Radio,
+  "/analytics": BarChart3,
+  "/integrations": Cable,
+  "/settings": Settings,
+  "/more": Ellipsis,
+};
 
-const MOBILE_PRIMARY = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { href: "/leads", label: "Leads", icon: Users },
-  { href: "/nurture", label: "Nurture", icon: Sprout },
-  { href: "/pipeline", label: "Pipeline", icon: ClipboardList },
-  { href: "/sources", label: "Sources", icon: Radio },
-];
+function NavLink({
+  href,
+  label,
+  active,
+}: {
+  href: NavHref;
+  label: string;
+  active: boolean;
+}) {
+  const Icon = ICONS[href];
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "flex items-center gap-3 rounded-[7px] px-3 py-2 text-[13px] font-semibold",
+        active
+          ? "bg-[linear-gradient(180deg,#7eb6ff_0%,var(--spm-blue-primary)_100%)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] [text-shadow:0_1px_0_rgba(7,22,74,0.28)]"
+          : "text-[var(--spm-navy)]/80 hover:bg-white/35",
+      )}
+    >
+      <Icon className="size-4 shrink-0" />
+      {label}
+    </Link>
+  );
+}
+
+function pathIsActive(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export function AppSidebar({
   userName,
   userEmail,
+  role,
 }: {
   userName: string;
   userEmail: string;
+  role: UserRole;
 }) {
   const pathname = usePathname();
+  const { sales, admin } = desktopNavForRole(role);
 
   return (
     <aside className="hidden w-[232px] shrink-0 flex-col border-r border-[#b7c2d3] bg-[linear-gradient(180deg,#e4ebf4_0%,#cfd8e6_100%)] px-3 py-4 md:flex">
       <BrandMark className="px-2" />
       <nav className="mt-7 flex flex-1 flex-col gap-0.5">
-        {NAV.map((item) => {
-          const active =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-[7px] px-3 py-2 text-[13px] font-semibold",
-                active
-                  ? "bg-[linear-gradient(180deg,#7eb6ff_0%,var(--spm-blue-primary)_100%)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] [text-shadow:0_1px_0_rgba(7,22,74,0.28)]"
-                  : "text-[var(--spm-navy)]/80 hover:bg-white/35",
-              )}
-            >
-              <Icon className="size-4 shrink-0" />
-              {item.label}
-            </Link>
-          );
-        })}
+        {sales.map((item) => (
+          <NavLink
+            key={item.href}
+            href={item.href}
+            label={item.label}
+            active={pathIsActive(pathname, item.href)}
+          />
+        ))}
+        {admin.length > 0 ? (
+          <>
+            <p className="mt-4 px-3 pb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--spm-navy)]/45">
+              Admin
+            </p>
+            {admin.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                active={pathIsActive(pathname, item.href)}
+              />
+            ))}
+          </>
+        ) : null}
       </nav>
       <div className="mt-4 rounded-lg border border-[rgba(7,22,74,0.1)] bg-white p-3">
         <p className="text-sm font-semibold text-[var(--spm-navy)]">{userName}</p>
@@ -84,15 +116,20 @@ export function AppSidebar({
   );
 }
 
-export function MobileBottomNav() {
+export function MobileBottomNav({ role }: { role: UserRole }) {
   const pathname = usePathname();
+  const items = mobilePrimaryNavForRole(role);
   return (
     <nav className="spm-dock md:hidden" aria-label="Primary">
-      <ul className="grid grid-cols-5 gap-1 px-1 pt-1.5">
-        {MOBILE_PRIMARY.map((item) => {
-          const active =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
-          const Icon = item.icon;
+      <ul
+        className={cn(
+          "grid gap-1 px-1 pt-1.5",
+          items.length === 5 ? "grid-cols-5" : "grid-cols-4",
+        )}
+      >
+        {items.map((item) => {
+          const active = pathIsActive(pathname, item.href);
+          const Icon = ICONS[item.href];
           return (
             <li key={item.href}>
               <Link
@@ -115,7 +152,7 @@ export function MobileBottomNav() {
   );
 }
 
-export function MobileTopBar({ title }: { title?: string }) {
+export function MobileTopBar({ role, title }: { role: UserRole; title?: string }) {
   return (
     <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-[#b7c2d3] bg-[linear-gradient(180deg,#f7f9fc,#e4ebf4)] px-4 py-3 md:hidden">
       <BrandMark />
@@ -124,11 +161,11 @@ export function MobileTopBar({ title }: { title?: string }) {
       ) : null}
       <div className="flex items-center gap-1">
         <Link
-          href="/settings"
+          href={role === "admin" ? "/more" : "/settings"}
           className="grid size-10 place-items-center rounded-full text-[var(--spm-navy)]/70"
-          aria-label="Settings"
+          aria-label={role === "admin" ? "More" : "Settings"}
         >
-          <Settings className="size-5" />
+          {role === "admin" ? <Ellipsis className="size-5" /> : <Settings className="size-5" />}
         </Link>
       </div>
     </div>

@@ -6,6 +6,8 @@ import {
   STAGE_INTEGRATIONS,
   WEBHOOK_CHANNEL_PATHS,
 } from "@/lib/pipeline/stage-integrations";
+import { requireAdminPage } from "@/lib/auth/require-admin";
+import { hydratePersistedActivities } from "@/lib/db/activity-persist";
 import { getWebhookReadiness } from "@/lib/integrations/readiness";
 import { STAGE_LABELS } from "@/types/domain";
 import { formatOpsDate } from "@/lib/utils";
@@ -13,6 +15,8 @@ import { formatOpsDate } from "@/lib/utils";
 export const metadata = { title: "Integrations" };
 
 export default async function IntegrationsPage() {
+  await requireAdminPage();
+  await hydratePersistedActivities();
   const summary = await getHubSpotFailureSummary();
   const store = getStore();
   const unmatched = store

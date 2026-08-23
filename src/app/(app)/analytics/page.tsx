@@ -6,11 +6,13 @@ import {
   PanelTitle,
 } from "@/components/ui/panel";
 import { getAnalytics } from "@/lib/analytics/queries";
+import { requireAdminPage } from "@/lib/auth/require-admin";
 import { formatPercent } from "@/lib/utils";
 
 export const metadata = { title: "Analytics" };
 
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+  await requireAdminPage();
   const { funnel, bySource, rates } = getAnalytics();
   const max = Math.max(...funnel.map((f) => f.count), 1);
 

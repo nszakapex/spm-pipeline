@@ -163,6 +163,7 @@ function createDemoStore(): DataStore {
 /**
  * Data access entry point.
  * Seeded dataset plus a process-local overlay for signed webhook ingest.
+ * Manual activity logs are also replayed from a signed demo cookie.
  * Does not contact Supabase or any external database.
  */
 export function getStore(): DataStore {

@@ -4,8 +4,8 @@ import {
   calculatePipelineHealth,
   summarizeSourceIntegrity,
 } from "@/lib/integrity/reconciliation";
-import { TERMINAL_STAGES, type Activity, type Lead } from "@/types/domain";
-import { isToday, parseISO } from "date-fns";
+import { getWorkNextQueue } from "@/lib/nurture/work-queue";
+import type { Activity, Lead } from "@/types/domain";
 
 export function getActivitiesByLead(): Map<string, Activity[]> {
   const map = new Map<string, Activity[]>();
@@ -42,83 +42,15 @@ export function getDashboardMetrics(now = new Date()) {
     now,
   );
 
-  const active = leads.filter((l) => !TERMINAL_STAGES.includes(l.stage));
-  const newToday = leads.filter((l) => isToday(parseISO(l.created_at))).length;
-  const hot = active.filter((l) => l.score_band === "P1").length;
-  const needsReply = filterLeadsByFlag("needs_reply", now).length;
-  const jakeReady = active.filter((l) => l.stage === "JAKE_READY").length;
-  const callsBooked = active.filter((l) => l.stage === "CALL_BOOKED").length;
-  const nurtureDue = filterLeadsByFlag("nurture_due", now).length;
-
-  const attention = [
-    { code: "uncontacted" as const, label: "Uncontacted", href: "/leads?risk=uncontacted" },
-    { code: "first_contact_overdue" as const, label: "First Contact Overdue", href: "/leads?risk=first_contact_overdue" },
-    { code: "no_owner" as const, label: "No Owner", href: "/leads?risk=no_owner" },
-    { code: "missing_source" as const, label: "Missing Source", href: "/leads?risk=missing_source" },
-    { code: "no_next_action" as const, label: "No Next Action", href: "/leads?risk=no_next_action" },
-    { code: "follow_up_overdue" as const, label: "Follow-up Overdue", href: "/leads?risk=follow_up_overdue" },
-    { code: "stale_stage" as const, label: "Stale Stage", href: "/leads?risk=stale_stage" },
-    { code: "no_show_recovery" as const, label: "No-show Recovery", href: "/leads?risk=no_show_recovery" },
-    { code: "integration_failure" as const, label: "Integration Failures", href: "/leads?risk=integration_failure" },
-    {
-      code: "unmatched_source_event" as const,
-      label: "Unmatched Source Events",
-      href: "/sources",
-      count: store
-        .getSourceEvents()
-        .filter((e) => ["unmatched", "failed"].includes(e.reconciliation_status))
-        .length,
-    },
-  ].map((item) => ({
-    ...item,
-    count:
-      "count" in item && typeof item.count === "number"
-        ? item.count
-        : filterLeadsByFlag(item.code, now).length,
-  }));
-
-  const priorityLeads = [...active]
-    .map((lead) => {
-      const flags = getLeadFlags(lead, now);
-      return {
-        lead,
-        flags,
-        owner: lead.owner_id ? store.getUser(lead.owner_id) : undefined,
-        why:
-          lead.next_action_note ||
-          flags[0]?.reason ||
-          (lead.score_band === "P1" ? "Hot lead" : "Needs attention"),
-      };
-    })
-    .sort((a, b) => {
-      const severity = (f: typeof a.flags) =>
-        f.some((x) => x.severity === "critical") ? 2 : f.length ? 1 : 0;
-      return (
-        severity(b.flags) - severity(a.flags) || b.lead.score - a.lead.score
-      );
-    })
-    .slice(0, 8);
-
-  const sourceHealth = store
-    .getSources()
-    .map((s) =>
-      summarizeSourceIntegrity(s, store.getSourceEvents(), store.getLeads()),
-    )
-    .sort((a, b) => b.submissionsReceived - a.submissionsReceived)
-    .slice(0, 6);
+  const unmatchedSourceEvents = store
+    .getSourceEvents()
+    .filter((e) => ["unmatched", "failed"].includes(e.reconciliation_status)).length;
 
   return {
     health,
     pipelineHealth: health.score,
-    newToday,
-    hot,
-    needsReply,
-    jakeReady,
-    callsBooked,
-    nurtureDue,
-    attention,
-    priorityLeads,
-    sourceHealth,
+    unmatchedSourceEvents,
+    workNext: getWorkNextQueue(now, 10),
   };
 }
 

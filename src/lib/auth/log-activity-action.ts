@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth/session";
+import { appendPersistedActivity, hydratePersistedActivities } from "@/lib/db/activity-persist";
 import { logManualLeadActivity, type ManualActivityKind } from "@/lib/pipeline/log-activity";
 import type { CallOutcome } from "@/integrations/webhooks/types";
 
@@ -41,13 +42,24 @@ export async function logLeadActivityAction(formData: FormData) {
     ? (outcomeRaw as CallOutcome)
     : undefined;
   const recap = String(formData.get("recap") ?? "");
+  const occurredAt = new Date().toISOString();
 
+  await hydratePersistedActivities();
   logManualLeadActivity({
     leadId,
     actorId: user.id,
     kind,
     outcome: kind === "call" ? outcome ?? "connected" : undefined,
     recap,
+    occurredAt,
+  });
+  await appendPersistedActivity({
+    leadId,
+    actorId: user.id,
+    kind,
+    outcome: kind === "call" ? outcome ?? "connected" : undefined,
+    recap: recap.trim() || undefined,
+    at: occurredAt,
   });
 
   redirect(`/leads/${leadId}`);

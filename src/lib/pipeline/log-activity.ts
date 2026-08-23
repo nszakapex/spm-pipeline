@@ -15,10 +15,11 @@ export function logManualLeadActivity(input: {
   kind: ManualActivityKind;
   outcome?: CallOutcome;
   recap?: string;
+  occurredAt?: string;
 }): IngestReceipt {
-  const occurredAt = new Date().toISOString();
+  const occurredAt = input.occurredAt ?? new Date().toISOString();
   const recap = input.recap?.trim() || undefined;
-  const externalEventId = `manual_${input.kind}_${input.leadId}_${Date.now()}`;
+  const externalEventId = `manual_${input.kind}_${input.leadId}_${new Date(occurredAt).getTime()}`;
 
   let event: CanonicalIngestEvent;
   if (input.kind === "call") {

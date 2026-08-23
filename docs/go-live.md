@@ -30,6 +30,8 @@ Creation payloads have no email. Identity arrives on the property-change events.
 
 Calls, iMessage, and personal Gmail: open the lead → **Log what you just did** → Save to pipeline.
 
+Manual logs also write a signed demo cookie (`spm_activity`) so a refresh or Vercel cold start does not erase Max’s session notes. That is still not operational persistence — webhook receipts stay process-local, and live HubSpot / Supabase come after this usability pass.
+
 ## Smoke tests (run anytime, no HubSpot login)
 
 ```bash

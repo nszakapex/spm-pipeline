@@ -1,88 +1,25 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { filterLeadsByFlag, getLeadFlags } from "@/lib/analytics/queries";
-import { getStore } from "@/lib/db/store";
-import { SCORE_BAND_LABELS, formatNextAction, type Lead } from "@/types/domain";
+import { hydratePersistedActivities } from "@/lib/db/activity-persist";
+import {
+  WORKING_REASON_LABEL,
+  getNurtureQueues,
+} from "@/lib/nurture/work-queue";
+import { SCORE_BAND_LABELS, formatNextAction } from "@/types/domain";
 import { formatOpsDate } from "@/lib/utils";
 
 export const metadata = { title: "Nurture" };
 
-function row(lead: Lead) {
-  const flags = getLeadFlags(lead);
-  return {
-    lead,
-    why:
-      lead.next_action_note ||
-      lead.nurture_reason ||
-      flags[0]?.reason ||
-      "Needs follow-up",
-    lastTouch: lead.last_contact_at ?? lead.last_activity_at ?? lead.created_at,
-    due: lead.next_action_at ?? lead.nurture_until,
-    action: lead.next_action_type ?? "FOLLOW_UP",
-  };
-}
-
-export default function NurturePage() {
-  const sections = [
-    {
-      key: "needs_reply",
-      title: "Needs reply",
-      leads: filterLeadsByFlag("needs_reply"),
-    },
-    {
-      key: "due_today",
-      title: "Due today",
-      leads: getStore()
-        .getLeads()
-        .filter((l) => {
-          if (!l.next_action_at && !l.nurture_until) return false;
-          const d = new Date(l.next_action_at ?? l.nurture_until!);
-          const now = new Date();
-          return (
-            d.getFullYear() === now.getFullYear() &&
-            d.getMonth() === now.getMonth() &&
-            d.getDate() === now.getDate()
-          );
-        }),
-    },
-    {
-      key: "overdue",
-      title: "Overdue",
-      leads: [
-        ...filterLeadsByFlag("follow_up_overdue"),
-        ...filterLeadsByFlag("first_contact_overdue"),
-      ].filter((l, i, arr) => arr.findIndex((x) => x.id === l.id) === i),
-    },
-    {
-      key: "no_show",
-      title: "No-show recovery",
-      leads: filterLeadsByFlag("no_show_recovery"),
-    },
-    {
-      key: "long_term",
-      title: "Long-term nurture",
-      leads: getStore()
-        .getLeads()
-        .filter((l) => l.disposition === "NURTURE"),
-    },
-    {
-      key: "no_response",
-      title: "No response",
-      leads: getStore()
-        .getLeads()
-        .filter((l) => l.disposition === "NO_RESPONSE"),
-    },
-  ];
+export default async function NurturePage() {
+  await hydratePersistedActivities();
+  const sections = getNurtureQueues();
 
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="spm-page-title">
-          Nurture queue
-        </h1>
+        <h1 className="spm-page-title">Nurture queue</h1>
         <p className="mt-1 max-w-2xl text-sm text-[var(--spm-text-muted)]">
-          Leads you should work, grouped by reason, with last touch and next
-          step on each row.
+          Each person has one primary reason. Extra reasons stay as flags.
         </p>
       </header>
 
@@ -113,8 +50,10 @@ export default function NurturePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {section.leads.map((lead) => {
-                    const item = row(lead);
+                  {section.leads.map(({ lead, why, secondary }) => {
+                    const lastTouch =
+                      lead.last_contact_at ?? lead.last_activity_at ?? lead.created_at;
+                    const due = lead.next_action_at ?? lead.nurture_until;
                     return (
                       <tr key={lead.id}>
                         <td>
@@ -133,16 +72,25 @@ export default function NurturePage() {
                           </p>
                         </td>
                         <td className="max-w-sm text-[var(--spm-text-muted)]">
-                          {item.why}
+                          <p>{why}</p>
+                          {secondary.length > 0 ? (
+                            <div className="mt-1 flex flex-wrap gap-1">
+                              {secondary.map((reason) => (
+                                <Badge key={reason} tone="warning">
+                                  {WORKING_REASON_LABEL[reason]}
+                                </Badge>
+                              ))}
+                            </div>
+                          ) : null}
                         </td>
                         <td className="whitespace-nowrap text-[var(--spm-text-muted)]">
-                          {formatOpsDate(item.lastTouch)}
+                          {formatOpsDate(lastTouch)}
                         </td>
                         <td className="whitespace-nowrap text-[var(--spm-text-muted)]">
-                          {item.due ? formatOpsDate(item.due) : "—"}
+                          {due ? formatOpsDate(due) : "—"}
                         </td>
                         <td className="whitespace-nowrap font-medium text-[var(--spm-navy)]">
-                          {formatNextAction(item.action)}
+                          {formatNextAction(lead.next_action_type)}
                         </td>
                       </tr>
                     );

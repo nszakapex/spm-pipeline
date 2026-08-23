@@ -9,6 +9,7 @@ import {
 } from "@/lib/auth/session";
 import { isDemoMode, shouldUseSecureCookies } from "@/lib/env";
 import { getStore } from "@/lib/db/store";
+import { ACTIVITY_COOKIE } from "@/lib/db/activity-cookie";
 
 async function resolveSecureFlag(): Promise<boolean> {
   const h = await headers();
@@ -45,6 +46,13 @@ export async function logoutAction() {
   const secure = await resolveSecureFlag();
   const jar = await cookies();
   jar.set(DEMO_SESSION_COOKIE, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure,
+    path: "/",
+    maxAge: 0,
+  });
+  jar.set(ACTIVITY_COOKIE, "", {
     httpOnly: true,
     sameSite: "lax",
     secure,

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { DEMO_SESSION_COOKIE } from "@/lib/auth/demo-token";
+import { ACTIVITY_COOKIE } from "@/lib/db/activity-cookie";
 import { shouldUseSecureCookies } from "@/lib/env";
 
 export async function POST(request: NextRequest) {
@@ -8,6 +9,13 @@ export async function POST(request: NextRequest) {
   const secure = shouldUseSecureCookies(proto);
   const res = NextResponse.redirect(new URL("/login", request.url), 303);
   res.cookies.set(DEMO_SESSION_COOKIE, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure,
+    path: "/",
+    maxAge: 0,
+  });
+  res.cookies.set(ACTIVITY_COOKIE, "", {
     httpOnly: true,
     sameSite: "lax",
     secure,

@@ -9,9 +9,11 @@ import {
 } from "@/components/ui/panel";
 import { LogActivityForm } from "@/components/leads/log-activity-form";
 import { getLeadFlags } from "@/lib/analytics/queries";
+import { isAdminRole } from "@/lib/auth/roles";
+import { getSessionUser } from "@/lib/auth/session";
+import { hydratePersistedActivities } from "@/lib/db/activity-persist";
 import { getStore } from "@/lib/db/store";
 import { getEnv } from "@/lib/env";
-import { getSessionUser } from "@/lib/auth/session";
 import {
   DISPOSITION_LABELS,
   SCORE_BAND_LABELS,
@@ -37,13 +39,14 @@ export default async function LeadDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await hydratePersistedActivities();
   const { id } = await params;
   const store = getStore();
   const lead = store.getLead(id);
   if (!lead) notFound();
   const session = await getSessionUser();
-  const env = getEnv();
-  const jakeMeetingsUrl = env.JAKE_MEETINGS_URL;
+  const admin = isAdminRole(session?.role);
+  const jakeMeetingsUrl = getEnv().JAKE_MEETINGS_URL;
 
   const owner = lead.owner_id ? store.getUser(lead.owner_id) : undefined;
   const factors = store
@@ -123,47 +126,62 @@ export default async function LeadDetailPage({
         </div>
       </header>
 
+      <Panel>
+        <PanelHeader>
+          <div>
+            <PanelTitle>Next Action</PanelTitle>
+            <PanelDescription>
+              Do this first, then log the result below.
+            </PanelDescription>
+          </div>
+        </PanelHeader>
+        <div className="px-5 pb-5">
+          <p className="text-base font-semibold text-[var(--spm-navy)]">
+            {formatNextAction(lead.next_action_type)}
+          </p>
+          <p className="mt-2 text-sm text-[var(--spm-text-muted)]">
+            {lead.next_action_note ?? "Schedule a follow-up to keep this lead visible."}
+          </p>
+          {lead.next_action_at ? (
+            <p className="mt-3 text-sm font-medium text-[var(--spm-navy)]">
+              Due {formatOpsDate(lead.next_action_at)}
+            </p>
+          ) : (
+            <p className="mt-3 text-sm font-medium text-[var(--spm-navy)]">
+              Missing next action timestamp
+            </p>
+          )}
+          <p className="mt-4 text-sm text-[var(--spm-text-muted)]">
+            Owner:{" "}
+            <span className="font-medium text-[var(--spm-navy)]">
+              {owner?.name ?? "Unassigned"}
+            </span>
+          </p>
+          {jakeMeetingsUrl ? (
+            <p className="mt-4">
+              <a
+                href={jakeMeetingsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm font-semibold text-[var(--spm-blue-primary)] hover:underline"
+              >
+                Open Jake&apos;s meetings link
+              </a>
+            </p>
+          ) : admin ? (
+            <p className="mt-4 text-sm text-[var(--spm-text-muted)]">
+              Jake&apos;s meetings link is not set yet. Add it from Integrations.
+            </p>
+          ) : null}
+        </div>
+      </Panel>
+
       <LogActivityForm
         leadId={lead.id}
-        jakeMeetingsUrl={jakeMeetingsUrl}
         canWrite={session?.role !== "viewer"}
       />
 
       <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-        <Panel>
-          <PanelHeader>
-            <div>
-              <PanelTitle>Next Action</PanelTitle>
-              <PanelDescription>
-                Every active lead must have a clear next step.
-              </PanelDescription>
-            </div>
-          </PanelHeader>
-          <div className="px-5 pb-5">
-            <p className="text-base font-semibold text-[var(--spm-navy)]">
-              {formatNextAction(lead.next_action_type)}
-            </p>
-            <p className="mt-2 text-sm text-[var(--spm-text-muted)]">
-              {lead.next_action_note ?? "Schedule a follow-up to keep this lead visible."}
-            </p>
-            {lead.next_action_at ? (
-              <p className="mt-3 text-sm font-medium text-[var(--spm-navy)]">
-                Due {formatOpsDate(lead.next_action_at)}
-              </p>
-            ) : (
-              <p className="mt-3 text-sm font-medium text-[var(--spm-navy)]">
-                Missing next action timestamp
-              </p>
-            )}
-            <p className="mt-4 text-sm text-[var(--spm-text-muted)]">
-              Owner:{" "}
-              <span className="font-medium text-[var(--spm-navy)]">
-                {owner?.name ?? "Unassigned"}
-              </span>
-            </p>
-          </div>
-        </Panel>
-
         <Panel>
           <PanelHeader>
             <div>
@@ -193,9 +211,7 @@ export default async function LeadDetailPage({
             ))}
           </ul>
         </Panel>
-      </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
         <Panel>
           <PanelHeader>
             <div>
@@ -230,77 +246,77 @@ export default async function LeadDetailPage({
             ))}
           </ol>
         </Panel>
+      </div>
 
-        <div className="space-y-4">
-          <Panel>
-            <PanelHeader>
-              <div>
-                <PanelTitle>Source / Attribution</PanelTitle>
-              </div>
-            </PanelHeader>
-            <dl className="grid grid-cols-2 gap-3 px-5 pb-5 text-sm">
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Source</dt>
-                <dd className="font-medium">{lead.source}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Campaign</dt>
-                <dd className="font-medium">{lead.campaign ?? "—"}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">UTM</dt>
-                <dd className="font-medium">
-                  {[lead.utm_source, lead.utm_medium, lead.utm_campaign]
-                    .filter(Boolean)
-                    .join(" / ") || "—"}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Source event</dt>
-                <dd className="font-medium">
-                  {sourceEvent ? sourceEvent.reconciliation_status : "—"}
-                </dd>
-              </div>
-            </dl>
-          </Panel>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Panel>
+          <PanelHeader>
+            <div>
+              <PanelTitle>Source / Attribution</PanelTitle>
+            </div>
+          </PanelHeader>
+          <dl className="grid grid-cols-2 gap-3 px-5 pb-5 text-sm">
+            <div>
+              <dt className="text-[var(--spm-text-muted)]">Source</dt>
+              <dd className="font-medium">{lead.source}</dd>
+            </div>
+            <div>
+              <dt className="text-[var(--spm-text-muted)]">Campaign</dt>
+              <dd className="font-medium">{lead.campaign ?? "—"}</dd>
+            </div>
+            <div>
+              <dt className="text-[var(--spm-text-muted)]">UTM</dt>
+              <dd className="font-medium">
+                {[lead.utm_source, lead.utm_medium, lead.utm_campaign]
+                  .filter(Boolean)
+                  .join(" / ") || "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[var(--spm-text-muted)]">Source event</dt>
+              <dd className="font-medium">
+                {sourceEvent ? sourceEvent.reconciliation_status : "—"}
+              </dd>
+            </div>
+          </dl>
+        </Panel>
 
-          <Panel>
-            <PanelHeader>
-              <div>
-                <PanelTitle>HubSpot</PanelTitle>
-                <PanelDescription>
-                  {env.HUBSPOT_CLIENT_SECRET
-                    ? "Inbound HubSpot v3 signatures are ready"
-                    : "Mock connector — set HUBSPOT_CLIENT_SECRET to accept live HubSpot webhooks"}
-                </PanelDescription>
-              </div>
-            </PanelHeader>
-            <dl className="grid grid-cols-2 gap-3 px-5 pb-5 text-sm">
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Contact</dt>
-                <dd className="font-medium">
-                  {lead.hubspot_contact_id ?? "—"}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Lead</dt>
-                <dd className="font-medium">{lead.hubspot_lead_id ?? "—"}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Deal</dt>
-                <dd className="font-medium">{lead.hubspot_deal_id ?? "—"}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--spm-text-muted)]">Last synced</dt>
-                <dd className="font-medium">
-                  {lead.last_synced_at
-                    ? formatOpsDate(lead.last_synced_at)
-                    : "—"}
-                </dd>
-              </div>
-            </dl>
-          </Panel>
-        </div>
+        <Panel>
+          <PanelHeader>
+            <div>
+              <PanelTitle>HubSpot</PanelTitle>
+              <PanelDescription>
+                {admin
+                  ? "CRM record. Inbound signatures and routes stay on Integrations."
+                  : "CRM record. HubSpot stays the source of truth."}
+              </PanelDescription>
+            </div>
+          </PanelHeader>
+          <dl className="grid grid-cols-2 gap-3 px-5 pb-5 text-sm">
+            <div>
+              <dt className="text-[var(--spm-text-muted)]">Contact</dt>
+              <dd className="font-medium">
+                {lead.hubspot_contact_id ?? "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[var(--spm-text-muted)]">Lead</dt>
+              <dd className="font-medium">{lead.hubspot_lead_id ?? "—"}</dd>
+            </div>
+            <div>
+              <dt className="text-[var(--spm-text-muted)]">Deal</dt>
+              <dd className="font-medium">{lead.hubspot_deal_id ?? "—"}</dd>
+            </div>
+            <div>
+              <dt className="text-[var(--spm-text-muted)]">Last synced</dt>
+              <dd className="font-medium">
+                {lead.last_synced_at
+                  ? formatOpsDate(lead.last_synced_at)
+                  : "—"}
+              </dd>
+            </div>
+          </dl>
+        </Panel>
       </div>
     </div>
   );
