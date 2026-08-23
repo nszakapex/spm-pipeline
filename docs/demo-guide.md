@@ -57,7 +57,7 @@ Proposed project settings:
 
 ## Reminders
 
-- Subtle shell disclosure: **Demo · synthetic data · HubSpot mock**
+- Subtle shell disclosure: **Demo · HubSpot mock** in the sidebar account card
 - Call / Email / Text / Book actions are mocked UI affordances — no live outreach
 - Signed `/api/webhooks/*` routes are pre-registered in mock (see [Integrations by stage](./integrations-by-stage.md))
 - Do not claim records are real SPM customers

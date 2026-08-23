@@ -46,8 +46,8 @@ function NavLink({
       className={cn(
         "flex items-center gap-3 rounded-[7px] px-3 py-2 text-[13px] font-semibold",
         active
-          ? "bg-[linear-gradient(180deg,#7eb6ff_0%,var(--spm-blue-primary)_100%)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] [text-shadow:0_1px_0_rgba(7,22,74,0.28)]"
-          : "text-[var(--spm-navy)]/80 hover:bg-white/35",
+          ? "bg-[var(--spm-blue-primary)] text-white"
+          : "text-[var(--spm-navy)]/80 hover:bg-[rgba(7,22,74,0.04)]",
       )}
     >
       <Icon className="size-4 shrink-0" />
@@ -73,7 +73,7 @@ export function AppSidebar({
   const { sales, admin } = desktopNavForRole(role);
 
   return (
-    <aside className="hidden w-[232px] shrink-0 flex-col border-r border-[#b7c2d3] bg-[linear-gradient(180deg,#e4ebf4_0%,#cfd8e6_100%)] px-3 py-4 md:flex">
+    <aside className="hidden w-[232px] shrink-0 flex-col border-r border-[rgba(7,22,74,0.08)] bg-[#f7f9fc] px-3 py-5 md:flex">
       <BrandMark className="px-2" />
       <nav className="mt-7 flex flex-1 flex-col gap-0.5">
         {sales.map((item) => (
@@ -103,6 +103,7 @@ export function AppSidebar({
       <div className="mt-4 rounded-lg border border-[rgba(7,22,74,0.1)] bg-white p-3">
         <p className="text-sm font-semibold text-[var(--spm-navy)]">{userName}</p>
         <p className="truncate text-xs text-[var(--spm-text-muted)]">{userEmail}</p>
+        <p className="mt-1 text-[11px] text-[var(--spm-text-muted)]">Demo · HubSpot mock</p>
         <form action="/api/logout" method="post" className="mt-2">
           <button
             type="submit"
@@ -137,7 +138,7 @@ export function MobileBottomNav({ role }: { role: UserRole }) {
                 className={cn(
                   "flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg text-[11px] font-semibold",
                   active
-                    ? "bg-white/70 text-[var(--spm-blue-primary)] shadow-[inset_0_1px_0_#fff]"
+                    ? "bg-[#eef5ff] text-[var(--spm-blue-primary)]"
                     : "text-[var(--spm-navy)]",
                 )}
               >
@@ -154,7 +155,7 @@ export function MobileBottomNav({ role }: { role: UserRole }) {
 
 export function MobileTopBar({ role, title }: { role: UserRole; title?: string }) {
   return (
-    <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-[#b7c2d3] bg-[linear-gradient(180deg,#f7f9fc,#e4ebf4)] px-4 py-3 md:hidden">
+    <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-[rgba(7,22,74,0.08)] bg-white px-4 py-3 md:hidden">
       <BrandMark />
       {title ? (
         <span className="text-sm font-semibold text-[var(--spm-navy)]">{title}</span>
