@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ScoreMark } from "@/components/leads/score-mark";
 import { Badge } from "@/components/ui/badge";
 import {
   Panel,
@@ -16,7 +17,6 @@ import { getStore } from "@/lib/db/store";
 import { getEnv } from "@/lib/env";
 import {
   DISPOSITION_LABELS,
-  SCORE_BAND_LABELS,
   STAGE_LABELS,
   formatNextAction,
 } from "@/types/domain";
@@ -80,19 +80,7 @@ export default async function LeadDetailPage({
               <h1 className="text-[1.9rem] font-semibold tracking-[-0.04em] text-[var(--spm-navy)]">
                 {lead.first_name} {lead.last_name}
               </h1>
-              <Badge
-                tone={
-                  lead.score_band === "P1"
-                    ? "hot"
-                    : lead.score_band === "P2"
-                      ? "high"
-                      : lead.score_band === "P3"
-                        ? "nurture"
-                        : "low"
-                }
-              >
-                {SCORE_BAND_LABELS[lead.score_band]} · {lead.score}
-              </Badge>
+              <ScoreMark band={lead.score_band} score={lead.score} />
             </div>
             <p className="mt-2 text-sm text-[var(--spm-text-muted)]">
               {lead.email ?? "No email"} · {lead.phone ?? "No phone"}

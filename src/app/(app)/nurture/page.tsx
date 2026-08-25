@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { ScoreMark } from "@/components/leads/score-mark";
 import { Badge } from "@/components/ui/badge";
 import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import {
   WORKING_REASON_LABEL,
   getNurtureQueues,
 } from "@/lib/nurture/work-queue";
-import { SCORE_BAND_LABELS, formatNextAction } from "@/types/domain";
+import { formatNextAction } from "@/types/domain";
 import { formatOpsDate } from "@/lib/utils";
 
 export const metadata = { title: "Nurture" };
@@ -64,11 +65,11 @@ export default async function NurturePage() {
                             {lead.first_name} {lead.last_name}
                           </Link>
                           <p className="mt-0.5">
-                            <Badge
-                              tone={lead.score_band === "P1" ? "hot" : "neutral"}
-                            >
-                              {SCORE_BAND_LABELS[lead.score_band]}
-                            </Badge>
+                            <ScoreMark
+                              band={lead.score_band}
+                              score={lead.score}
+                              compact
+                            />
                           </p>
                         </td>
                         <td className="max-w-sm text-[var(--spm-text-muted)]">

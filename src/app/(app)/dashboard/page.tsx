@@ -4,8 +4,9 @@ import { getDashboardMetrics } from "@/lib/analytics/queries";
 import { getSessionUser } from "@/lib/auth/session";
 import { isAdminRole } from "@/lib/auth/roles";
 import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
+import { ScoreMark } from "@/components/leads/score-mark";
 import { WORKING_REASON_LABEL } from "@/lib/nurture/work-queue";
-import { SCORE_BAND_LABELS, formatNextAction } from "@/types/domain";
+import { formatNextAction } from "@/types/domain";
 
 export const metadata = { title: "Home" };
 
@@ -62,8 +63,12 @@ export default async function DashboardPage() {
                       >
                         {lead.first_name} {lead.last_name}
                       </Link>
-                      <p className="text-xs text-[var(--spm-text-muted)]">
-                        {SCORE_BAND_LABELS[lead.score_band]} · {lead.score}
+                      <p className="mt-1.5">
+                        <ScoreMark
+                          band={lead.score_band}
+                          score={lead.score}
+                          compact
+                        />
                       </p>
                     </td>
                     <td className="max-w-xs text-[var(--spm-text-muted)]">

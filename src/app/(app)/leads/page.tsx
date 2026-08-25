@@ -1,11 +1,11 @@
 import Link from "next/link";
+import { ScoreMark } from "@/components/leads/score-mark";
 import { Badge } from "@/components/ui/badge";
 import { getLeadFlags, filterLeadsByFlag } from "@/lib/analytics/queries";
 import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import { getStore } from "@/lib/db/store";
 import {
   DISPOSITION_LABELS,
-  SCORE_BAND_LABELS,
   STAGE_LABELS,
   formatNextAction,
   type Lead,
@@ -177,19 +177,7 @@ export default async function LeadsPage({
                     </p>
                   </td>
                   <td>
-                    <Badge
-                      tone={
-                        lead.score_band === "P1"
-                          ? "hot"
-                          : lead.score_band === "P2"
-                            ? "high"
-                            : lead.score_band === "P3"
-                              ? "nurture"
-                              : "low"
-                      }
-                    >
-                      {SCORE_BAND_LABELS[lead.score_band]} · {lead.score}
-                    </Badge>
+                    <ScoreMark band={lead.score_band} score={lead.score} compact />
                     {flags[0] ? (
                       <p className="mt-1 text-[11px] text-[var(--spm-navy)]">
                         {flags[0].label}
@@ -254,9 +242,7 @@ export default async function LeadsPage({
                       {lead.source}
                     </p>
                   </div>
-                  <Badge tone={lead.score_band === "P1" ? "hot" : "high"}>
-                    {lead.score}
-                  </Badge>
+                  <ScoreMark band={lead.score_band} score={lead.score} compact />
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   <Badge tone="neutral">{STAGE_LABELS[lead.stage]}</Badge>

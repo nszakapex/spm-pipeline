@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ScoreMark } from "@/components/leads/score-mark";
 import { Badge } from "@/components/ui/badge";
 import { getLeadFlags } from "@/lib/analytics/queries";
 import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
@@ -108,7 +109,7 @@ function LeadCard({ leadId }: { leadId: string }) {
         <p className="font-medium text-[var(--spm-navy)]">
           {lead.first_name} {lead.last_name}
         </p>
-        <Badge tone={lead.score_band === "P1" ? "hot" : "high"}>{lead.score}</Badge>
+        <ScoreMark band={lead.score_band} score={lead.score} compact />
       </div>
       <p className="mt-1 text-xs text-[var(--spm-text-muted)]">{lead.source}</p>
       <p className="mt-1 text-xs text-[var(--spm-text-muted)]">
