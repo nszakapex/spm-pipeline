@@ -64,11 +64,7 @@ export default async function DashboardPage() {
                         {lead.first_name} {lead.last_name}
                       </Link>
                       <p className="mt-1.5">
-                        <ScoreMark
-                          band={lead.score_band}
-                          score={lead.score}
-                          compact
-                        />
+                        <ScoreMark band={lead.score_band} compact />
                       </p>
                     </td>
                     <td className="max-w-xs text-[var(--spm-text-muted)]">

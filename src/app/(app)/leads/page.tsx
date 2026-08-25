@@ -177,7 +177,7 @@ export default async function LeadsPage({
                     </p>
                   </td>
                   <td>
-                    <ScoreMark band={lead.score_band} score={lead.score} compact />
+                    <ScoreMark band={lead.score_band} compact />
                     {flags[0] ? (
                       <p className="mt-1 text-[11px] text-[var(--spm-navy)]">
                         {flags[0].label}
@@ -242,7 +242,7 @@ export default async function LeadsPage({
                       {lead.source}
                     </p>
                   </div>
-                  <ScoreMark band={lead.score_band} score={lead.score} compact />
+                  <ScoreMark band={lead.score_band} compact />
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   <Badge tone="neutral">{STAGE_LABELS[lead.stage]}</Badge>

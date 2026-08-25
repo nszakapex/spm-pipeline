@@ -80,7 +80,7 @@ export default async function LeadDetailPage({
               <h1 className="text-[1.9rem] font-semibold tracking-[-0.04em] text-[var(--spm-navy)]">
                 {lead.first_name} {lead.last_name}
               </h1>
-              <ScoreMark band={lead.score_band} score={lead.score} />
+              <ScoreMark band={lead.score_band} />
             </div>
             <p className="mt-2 text-sm text-[var(--spm-text-muted)]">
               {lead.email ?? "No email"} · {lead.phone ?? "No phone"}

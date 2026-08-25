@@ -109,7 +109,7 @@ function LeadCard({ leadId }: { leadId: string }) {
         <p className="font-medium text-[var(--spm-navy)]">
           {lead.first_name} {lead.last_name}
         </p>
-        <ScoreMark band={lead.score_band} score={lead.score} compact />
+        <ScoreMark band={lead.score_band} compact />
       </div>
       <p className="mt-1 text-xs text-[var(--spm-text-muted)]">{lead.source}</p>
       <p className="mt-1 text-xs text-[var(--spm-text-muted)]">
