@@ -30,7 +30,11 @@ Creation payloads have no email. Identity arrives on the property-change events.
 
 Calls, iMessage, and personal Gmail: open the lead → **Log what you just did** → Save to pipeline.
 
-Manual logs also write a signed demo cookie (`spm_activity`) so a refresh or Vercel cold start does not erase Max’s session notes. That is still not operational persistence — webhook receipts stay process-local, and live HubSpot / Supabase come after this usability pass.
+Manual logs also write a signed demo cookie (`spm_activity`) so a refresh or Vercel cold start does not erase Max’s session notes.
+
+## Supabase (provisioned, not wired yet)
+
+A free Supabase project **spm-pipeline** is attached via Vercel Marketplace (`iad1`, project ref `hwndeqjqjprbqqtgoxbn`). Production and Preview have the connection env vars. The init schema is applied (`users`, `leads`, `activities`, source/score/sync tables) with RLS on. The app still reads the in-memory demo store until persist is wired. Do not switch `APP_MODE=auth`. Open the store from the Vercel integrations dashboard.
 
 ## Smoke tests (run anytime, no HubSpot login)
 
