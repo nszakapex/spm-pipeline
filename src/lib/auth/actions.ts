@@ -7,6 +7,7 @@ import {
   DEMO_SESSION_MAX_AGE_SECONDS,
   createDemoSessionToken,
 } from "@/lib/auth/session";
+import { resolveDemoLogin } from "@/lib/auth/demo-password";
 import { isDemoMode, shouldUseSecureCookies } from "@/lib/env";
 import { getStore } from "@/lib/db/store";
 import { ACTIVITY_COOKIE } from "@/lib/db/activity-cookie";
@@ -25,9 +26,15 @@ export async function demoLoginAction(formData: FormData) {
     throw new Error("Demo login is only available when APP_MODE=demo");
   }
   const userId = String(formData.get("userId") ?? "");
-  const user = getStore().getUser(userId);
+  const password = String(formData.get("password") ?? "");
+  const resolved = resolveDemoLogin({ userId, password });
+  if (!resolved.ok) {
+    if (resolved.reason === "unknown-user") redirect("/login");
+    redirect(`/login?profile=${encodeURIComponent(userId)}&notice=bad-password`);
+  }
+  const user = getStore().getUser(resolved.userId);
   if (!user) {
-    throw new Error("Unknown demo user");
+    redirect("/login");
   }
   const token = createDemoSessionToken(user.id);
   const secure = await resolveSecureFlag();

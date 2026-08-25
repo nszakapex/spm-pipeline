@@ -26,7 +26,7 @@ Open http://localhost:3000 and sign in as **Max Sussman** (Sales), **Mack Ianni*
 
 ## Story to present
 
-1. **Max signs in** — sales nav is Home, Leads, Nurture, Pipeline. Sources, Analytics, Integrations, and Settings stay under Admin.
+1. **Max signs in** — click Max’s profile, enter the shared demo password, then sales nav is Home, Leads, Nurture, Pipeline. Sources, Analytics, Integrations, and Settings stay under Admin.
 2. **Home is one queue** — **Work next** lists about ten unique people, reply-first.
 3. **Open Sarah Thompson** (`/leads/lead_001`) — **Next Action** sits under her name; log the result after you do it. No environment-variable copy.
 4. **Nurture does not repeat people** — Sarah appears once under Needs reply; overdue/due today stay as flags.

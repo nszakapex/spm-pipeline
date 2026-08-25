@@ -64,4 +64,4 @@ export async function requireSessionUser(): Promise<SessionUser> {
   return user;
 }
 
-export { DEMO_LOGIN_OPTIONS } from "@/lib/auth/demo-login";
+export { DEMO_LOGIN_OPTIONS, findDemoLoginOption } from "@/lib/auth/demo-login";
