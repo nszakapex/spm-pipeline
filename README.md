@@ -2,10 +2,92 @@
 
 **Superpower Mentors — Pipeline Control**
 
-Internal sales integrity, pipeline, scoring, and nurture layer that sits on top of HubSpot (HubSpot remains the CRM source of truth in v1).
+Internal sales integrity, pipeline, scoring, and nurture layer that sits on top of HubSpot. HubSpot remains the CRM source of truth.
 
-## Status
+> We are not rebuilding HubSpot. We are making it impossible for Superpower Mentors to lose visibility into a lead between acquisition and close.
 
-Planning complete — implementation has **not** started pending plan approval.
+**Phase 1 (demo hardening) is on this branch:** `cursor/spm-pipeline-mvp-e857`  
+**PR:** https://github.com/nszakapex/spm-pipeline/pull/2  
+**`main` does not include the app or Phase 1.** Checkout this branch (or the PR) to see login, HMAC demo sessions, `src/proxy.ts`, `/api/logout`, and `.env.example`.
 
-See [`docs/implementation-plan.md`](./docs/implementation-plan.md).
+## Supported runtime (local + Vercel Preview)
+
+| Variable | Required value |
+| --- | --- |
+| `APP_MODE` | `demo` |
+| `HUBSPOT_MODE` | `mock` |
+| `DEMO_SESSION_SECRET` | random secret, **≥ 32 characters** |
+
+**`demo` + `mock` is the only supported deployed combination.**
+
+- Supabase is **not** required for the demo.
+- Supabase Auth mode (`APP_MODE=auth`) is **incomplete and unsupported**.
+- HubSpot is **mocked** — no live CRM credentials or writes.
+- Every displayed record is **synthetic sample data**.
+
+## Local demo setup
+
+```bash
+npm ci
+cp .env.example .env.local
+openssl rand -hex 32
+# Paste the output into .env.local as DEMO_SESSION_SECRET=...
+npm run dev
+```
+
+Open http://localhost:3000 → sign in as **Max Sussman** (Sales). Other demo logins: **Mack Ianni** (Sales) and **Nate Szakallas** (Admin).
+
+Generate a secret without pasting it into chat or commits:
+
+```bash
+openssl rand -hex 32
+```
+
+## Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Local development |
+| `npm run build` | Production build |
+| `npm run typecheck` | TypeScript |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest unit tests |
+| `npm run smoke:webhooks` | HubSpot-shaped ingest + manual log + v3 signature smoke |
+| `npm run typecheck` | TypeScript |
+
+## Vercel Preview settings (proposed)
+
+| Setting | Value |
+| --- | --- |
+| Framework Preset | Next.js |
+| Root Directory | `.` |
+| Node.js Version | `24.x` |
+| Install Command | default (`npm install` / lockfile) |
+| Build Command | default (`npm run build`) |
+| Output Directory | default |
+
+### Preview environment variable **names** (never commit values)
+
+- `APP_MODE`
+- `HUBSPOT_MODE`
+- `DEMO_SESSION_SECRET` (Sensitive)
+
+Do **not** set Supabase or HubSpot credentials for Preview.
+
+Use a **protected Preview** (Vercel Authentication / Standard Protection) before any production decision.
+
+## Docs
+
+- [Architecture](./docs/architecture.md)
+- [Integrations by stage](./docs/integrations-by-stage.md)
+- [Go live (HubSpot)](./docs/go-live.md)
+- [Brand audit](./docs/brand-audit.md)
+- [Data model](./docs/data-model.md)
+- [Scoring](./docs/scoring.md)
+- [Reconciliation](./docs/reconciliation.md)
+- [Demo guide](./docs/demo-guide.md)
+- [Implementation plan](./docs/implementation-plan.md)
+
+## Stack
+
+Next.js App Router · TypeScript strict · Tailwind · SQL migrations (no ORM) · HubSpot mock adapter · demo-cookie auth · Vercel-ready

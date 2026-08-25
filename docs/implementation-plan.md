@@ -1,9 +1,9 @@
 # SPM Pipeline — Implementation Plan
 
-**Product:** SPM Pipeline  
-**Internal title:** Superpower Mentors — Pipeline Control  
-**Status:** Awaiting approval — no application implementation until approved  
-**Repo state at planning:** Greenfield (`README.md` + `.gitignore` only)  
+**Product:** SPM Pipeline
+**Internal title:** Superpower Mentors — Pipeline Control
+**Status:** Awaiting approval — no application implementation until approved
+**Repo state at planning:** Greenfield (`README.md` + `.gitignore` only)
 **Thesis:** We are not rebuilding HubSpot. We are making it impossible for Superpower Mentors to lose visibility into a lead between acquisition and close.
 
 ---
@@ -124,7 +124,11 @@ Proposed layout after foundation (not created until approval):
 │   │   │   ├── integrations/page.tsx
 │   │   │   └── settings/page.tsx
 │   │   ├── api/
-│   │   │   ├── webhooks/hubspot/route.ts   # stubbed; live later
+│   │   │   ├── webhooks/hubspot/route.ts
+│   │   │   ├── webhooks/calendar/route.ts
+│   │   │   ├── webhooks/calls/route.ts
+│   │   │   ├── webhooks/messaging/route.ts
+│   │   │   ├── webhooks/sources/[channel]/route.ts
 │   │   │   └── health/route.ts
 │   │   ├── layout.tsx
 │   │   └── globals.css
@@ -166,13 +170,18 @@ Proposed layout after foundation (not created until approval):
 │   │       ├── seed.ts
 │   │       └── sample-leads.ts
 │   ├── integrations/
-│   │   └── hubspot/
-│   │       ├── client.ts
-│   │       ├── types.ts
-│   │       ├── mock.ts
-│   │       ├── sync.ts
-│   │       ├── mapper.ts
-│   │       └── webhooks.ts             # future
+│   │   ├── hubspot/
+│   │   │   ├── client.ts
+│   │   │   ├── types.ts
+│   │   │   ├── mock.ts
+│   │   │   ├── sync.ts
+│   │   │   ├── mapper.ts
+│   │   │   └── webhooks.ts
+│   │   └── webhooks/
+│   │       ├── signature.ts
+│   │       ├── parse.ts
+│   │       ├── ingest.ts
+│   │       └── http.ts
 │   └── types/
 ├── supabase/
 │   ├── migrations/
@@ -370,7 +379,7 @@ src/integrations/hubspot/
   mock.ts      # deterministic fixture graph
   sync.ts      # pull/push orchestration
   mapper.ts    # HubSpot ↔ canonical lead
-  webhooks.ts  # future inbound events
+  webhooks.ts  # inbound HubSpot events → canonical ingest
 ```
 
 ### Modes
@@ -387,14 +396,18 @@ Prototype ships **mock only**. Do not request HubSpot private app tokens.
 1. **HubSpot → SPM Pipeline** (primary): contacts, lifecycle/deal stage, meeting outcomes, owner, notes timestamps.
 2. **SPM → HubSpot (approved fields only)**: stage changes, next-action notes, qualification flags, score band (if desired), activity summaries.
 
-### Webhooks (planned, not built in early prototype)
+### Webhooks (pre-registered in mock)
+
+Signed stub routes exist now. Live HubSpot subscription create and HubSpot v3 signatures are not enabled.
 
 - Contact creation/property change
 - Deal stage change
-- Meeting booked / no-show
-- Form submission association
+- Meeting booked / held / no-show / canceled (Jake’s HubSpot Meetings calendar)
+- Form / Meta source submissions
+- Sales call logged / analyzed
+- Lead email/SMS replies
 
-Webhook receiver authenticates signatures, writes `integration_events`, upserts leads, recomputes integrity flags. Polling remains fallback.
+Webhook receiver authenticates `spm-v1` HMAC (always) and HubSpot **v3** signatures when `HUBSPOT_CLIENT_SECRET` is set. See `docs/go-live.md`.
 
 ### Mapper philosophy
 
@@ -470,8 +483,8 @@ Exact production source → HubSpot property mapping remains an open question fo
 
 Sources screen must make gaps obvious:
 
-> Meta reports 41 submissions.  
-> 40 leads accounted for.  
+> Meta reports 41 submissions.
+> 40 leads accounted for.
 > **1 lead potentially missing.**
 
 Implementation: compare `source_submissions` count vs matched leads / HubSpot-synced records for a period, surface `unmatched` + `failed` with drill-down.
@@ -536,7 +549,7 @@ Recompute on: new activity, stage change, meeting status change, source attribut
 
 ### Recommendation: stages + dispositions (not one flat list)
 
-**Primary stage** = where the lead sits on the enrollment path.  
+**Primary stage** = where the lead sits on the enrollment path.
 **Disposition** = side operating mode / outcome qualifier.
 
 This is cleaner than stuffing `NURTURE`, `NO_RESPONSE`, and `NOT_QUALIFIED` into the same ordered kanban as `WON`.
@@ -774,7 +787,7 @@ Public site uses Inter. User frontend rules caution against default Inter for gr
 
 - Fictional only; never claim real SPM customers
 - No permanent loud DEMO banner
-- Subtle Settings disclosure / tooltip:  
+- Subtle Settings disclosure / tooltip:
   **“Prototype environment — customer records shown here are sample data.”**
 - Realistic names, imperfect timestamps, messy ops problems baked in
 
@@ -925,13 +938,13 @@ Must learn from SPM before any **live** integration:
 14. Authorized logo/brand package for internal software distribution
 15. Data retention expectations for sales notes
 
-**Risk:** Building hard-coupled stage names before HubSpot mapping is known.  
+**Risk:** Building hard-coupled stage names before HubSpot mapping is known.
 **Mitigation:** mapping table + adapter; UI uses SPM canonical stages.
 
-**Risk:** Accidental clinical data leakage via HubSpot property sync.  
+**Risk:** Accidental clinical data leakage via HubSpot property sync.
 **Mitigation:** allowlist mapper; privacy review.
 
-**Risk:** Prototype mistaken for live CRM.  
+**Risk:** Prototype mistaken for live CRM.
 **Mitigation:** mock mode + Settings disclosure + fictional seed.
 
 ---
@@ -963,7 +976,7 @@ Must learn from SPM before any **live** integration:
 - Advanced role admin UI
 - Auto-merge duplicates
 - AI scoring / AI email drafts
-- Full webhook infrastructure hardening
+- Full webhook infrastructure hardening (beyond signed mock ingest)
 - Real SPM credentials or real customer imports
 - Multi-workspace / agency SaaS features
 
