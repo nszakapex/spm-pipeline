@@ -13,6 +13,7 @@ import {
 import { ingestCanonicalEvents, type IngestBatchResult } from "./ingest";
 import type { CanonicalIngestEvent } from "./types";
 import { PRE_REGISTERED_WEBHOOKS } from "@/lib/pipeline/stage-integrations";
+import { persistStoreOverlay, hydrateStoreFromSupabase } from "@/lib/db/supabase-persist";
 import { getEnv } from "@/lib/env";
 import { getWebhookReadiness } from "@/lib/integrations/readiness";
 import type { IngestChannel } from "@/types/domain";
@@ -75,7 +76,20 @@ export async function handleSignedWebhookPost(
     );
   }
 
+  try {
+    await hydrateStoreFromSupabase();
+  } catch {
+    return NextResponse.json({ ok: false, error: "Failed to load persisted pipeline" }, { status: 500 });
+  }
+
   const result = ingestCanonicalEvents(events);
+
+  try {
+    await persistStoreOverlay();
+  } catch {
+    return NextResponse.json({ ok: false, error: "Failed to persist ingest" }, { status: 500 });
+  }
+
   return NextResponse.json(result, { status: result.httpStatus });
 }
 

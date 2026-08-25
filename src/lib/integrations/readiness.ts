@@ -7,6 +7,7 @@ export function getWebhookReadiness() {
     hubspotMode: env.HUBSPOT_MODE,
     hubspotV3Ready: Boolean(env.HUBSPOT_CLIENT_SECRET),
     jakeMeetingsUrlReady: Boolean(env.JAKE_MEETINGS_URL),
+    persistReady: env.persistReady,
     mockHmacReady: true,
     inboundRoutes: WEBHOOK_CHANNEL_PATHS,
     hubspotSubscriptions: PRE_REGISTERED_WEBHOOKS.filter((h) => h.channel === "hubspot").map(

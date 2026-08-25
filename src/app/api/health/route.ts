@@ -10,9 +10,11 @@ export async function GET() {
     app: "spm-pipeline",
     mode: env.APP_MODE,
     hubspot: env.HUBSPOT_MODE,
+    persistReady: webhooks.persistReady,
     webhooks: {
       hubspotV3Ready: webhooks.hubspotV3Ready,
       jakeMeetingsUrlReady: webhooks.jakeMeetingsUrlReady,
+      persistReady: webhooks.persistReady,
       mockHmacReady: webhooks.mockHmacReady,
       hubspotTarget: "/api/webhooks/hubspot",
       hubspotSubscriptions: webhooks.hubspotSubscriptions,

@@ -7,7 +7,7 @@ import {
   WEBHOOK_CHANNEL_PATHS,
 } from "@/lib/pipeline/stage-integrations";
 import { requireAdminPage } from "@/lib/auth/require-admin";
-import { hydratePersistedActivities } from "@/lib/db/activity-persist";
+import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import { getWebhookReadiness } from "@/lib/integrations/readiness";
 import { STAGE_LABELS } from "@/types/domain";
 import { formatOpsDate } from "@/lib/utils";
@@ -16,7 +16,7 @@ export const metadata = { title: "Integrations" };
 
 export default async function IntegrationsPage() {
   await requireAdminPage();
-  await hydratePersistedActivities();
+  await hydratePipelineForRequest();
   const summary = await getHubSpotFailureSummary();
   const store = getStore();
   const unmatched = store
@@ -71,6 +71,14 @@ export default async function IntegrationsPage() {
               <td className="text-[var(--spm-text-muted)]">Jake Meetings link</td>
               <td className="font-medium text-[var(--spm-navy)]">
                 {ready.jakeMeetingsUrlReady ? "Set" : "Not set — optional JAKE_MEETINGS_URL"}
+              </td>
+            </tr>
+            <tr>
+              <td className="text-[var(--spm-text-muted)]">Overnight persist</td>
+              <td className="font-medium text-[var(--spm-navy)]">
+                {ready.persistReady
+                  ? "On — logs and new contacts survive a restart"
+                  : "Off — this session only"}
               </td>
             </tr>
             <tr>

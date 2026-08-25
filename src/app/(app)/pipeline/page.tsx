@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getLeadFlags } from "@/lib/analytics/queries";
-import { hydratePersistedActivities } from "@/lib/db/activity-persist";
+import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import { getStore } from "@/lib/db/store";
 import { OPEN_STAGES, STAGE_LABELS, DISPOSITION_LABELS, formatNextAction, type LeadStage } from "@/types/domain";
 
@@ -12,7 +12,7 @@ export default async function PipelinePage({
 }: {
   searchParams: Promise<{ stage?: string }>;
 }) {
-  await hydratePersistedActivities();
+  await hydratePipelineForRequest();
   const params = await searchParams;
   const store = getStore();
   const leads = store.getLeads().filter((l) => OPEN_STAGES.includes(l.stage));

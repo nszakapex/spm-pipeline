@@ -30,11 +30,13 @@ Creation payloads have no email. Identity arrives on the property-change events.
 
 Calls, iMessage, and personal Gmail: open the lead → **Log what you just did** → Save to pipeline.
 
-Manual logs also write a signed demo cookie (`spm_activity`) so a refresh or Vercel cold start does not erase Max’s session notes.
+Manual logs also write a signed demo cookie (`spm_activity`) as a same-browser backup.
 
-## Supabase (provisioned, not wired yet)
+## Supabase persist (wired)
 
-A free Supabase project **spm-pipeline** is attached via Vercel Marketplace (`iad1`, project ref `hwndeqjqjprbqqtgoxbn`). Production and Preview have the connection env vars. The init schema is applied (`users`, `leads`, `activities`, source/score/sync tables) with RLS on. The app still reads the in-memory demo store until persist is wired. Do not switch `APP_MODE=auth`. Open the store from the Vercel integrations dashboard.
+A free Supabase project **spm-pipeline** is attached via Vercel Marketplace (`iad1`, project ref `hwndeqjqjprbqqtgoxbn`). Production and Preview have the connection env vars. Overlay tables (`pipeline_*`) store ingest + manual logs with text IDs (`lead_001`, new HubSpot contacts). The service-role key writes server-side only; RLS is on with no anon/authenticated policies.
+
+Request handlers hydrate that overlay, then apply ingest in memory, then persist the snapshot. A 9pm email or new contact is still there in the morning. The cookie is a fallback if persist is unset (local tests). `/api/health` reports `persistReady`. Do not switch `APP_MODE=auth`. HubSpot is still mock until you paste the client secret.
 
 ## Smoke tests (run anytime, no HubSpot login)
 
@@ -60,7 +62,7 @@ Check readiness without tests:
 curl -sS https://spm-pipeline.vercel.app/api/health
 ```
 
-`webhooks.hubspotV3Ready` is `false` until `HUBSPOT_CLIENT_SECRET` is set. `waitingOnYou` lists the missing env names only.
+`webhooks.hubspotV3Ready` is `false` until `HUBSPOT_CLIENT_SECRET` is set. `waitingOnYou` lists the missing HubSpot env names only. `persistReady` is `true` on Vercel when overlay persist credentials are present.
 
 GET `/api/webhooks/hubspot` prints the subscription catalog.
 

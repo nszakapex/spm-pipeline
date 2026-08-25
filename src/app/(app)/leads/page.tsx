@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getLeadFlags, filterLeadsByFlag } from "@/lib/analytics/queries";
-import { hydratePersistedActivities } from "@/lib/db/activity-persist";
+import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import { getStore } from "@/lib/db/store";
 import {
   DISPOSITION_LABELS,
@@ -65,7 +65,7 @@ export default async function LeadsPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
-  await hydratePersistedActivities();
+  await hydratePipelineForRequest();
   const params = await searchParams;
   const store = getStore();
   const leads = applyFilters(store.getLeads(), params);

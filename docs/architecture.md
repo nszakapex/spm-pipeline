@@ -31,8 +31,8 @@ Demo auth is isolated in `src/lib/auth/*` and must never become an insecure prod
 
 ## Data access
 
-- SQL migrations in `supabase/migrations` (no ORM) — reference schema only for a future pilot.
-- Runtime `getStore()` serves the in-memory seeded dataset plus a process-local overlay for signed webhook ingest. No Supabase, SQL, or network data plane in demo mode.
+- SQL migrations in `supabase/migrations` (no ORM). Init schema is CRM-style UUIDs (unused at runtime). Overlay tables `pipeline_*` persist ingest + manual logs with demo text IDs.
+- Runtime `getStore()` is sync and memory-first: seed + overlay. When persist credentials are set, handlers hydrate the overlay from Supabase, then persist after ingest. Tests omit the keys (no network).
 - Types live in `src/types/domain.ts`.
 
 ## Integration boundary
@@ -44,7 +44,7 @@ UI / server pages
   → integrations/webhooks/* (signed mock ingest)
 ```
 
-UI never calls HubSpot, Jake's calendar, or a dialer directly. Demo runtime does not contact Supabase or HubSpot.
+UI never calls HubSpot, Jake's calendar, or a dialer directly. Demo runtime may contact Supabase for overlay persist only (service role, server-side). It does not call HubSpot until inbound v3 is configured.
 
 Inbound events use pre-registered routes under `/api/webhooks/*` (HMAC `spm-v1`). See [Integrations by stage](./integrations-by-stage.md).
 

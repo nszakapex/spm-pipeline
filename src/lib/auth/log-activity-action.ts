@@ -2,7 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth/session";
-import { appendPersistedActivity, hydratePersistedActivities } from "@/lib/db/activity-persist";
+import { appendPersistedActivity } from "@/lib/db/activity-persist";
+import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
+import { persistStoreOverlay } from "@/lib/db/supabase-persist";
 import { logManualLeadActivity, type ManualActivityKind } from "@/lib/pipeline/log-activity";
 import type { CallOutcome } from "@/integrations/webhooks/types";
 
@@ -44,7 +46,7 @@ export async function logLeadActivityAction(formData: FormData) {
   const recap = String(formData.get("recap") ?? "");
   const occurredAt = new Date().toISOString();
 
-  await hydratePersistedActivities();
+  await hydratePipelineForRequest();
   logManualLeadActivity({
     leadId,
     actorId: user.id,
@@ -61,6 +63,11 @@ export async function logLeadActivityAction(formData: FormData) {
     recap: recap.trim() || undefined,
     at: occurredAt,
   });
+  try {
+    await persistStoreOverlay();
+  } catch {
+    // Cookie backup still holds the log for this browser.
+  }
 
   redirect(`/leads/${leadId}`);
 }

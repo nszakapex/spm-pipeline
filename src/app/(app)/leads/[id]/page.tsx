@@ -11,7 +11,7 @@ import { LogActivityForm } from "@/components/leads/log-activity-form";
 import { getLeadFlags } from "@/lib/analytics/queries";
 import { isAdminRole } from "@/lib/auth/roles";
 import { getSessionUser } from "@/lib/auth/session";
-import { hydratePersistedActivities } from "@/lib/db/activity-persist";
+import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import { getStore } from "@/lib/db/store";
 import { getEnv } from "@/lib/env";
 import {
@@ -28,6 +28,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  await hydratePipelineForRequest();
   const lead = getStore().getLead(id);
   return {
     title: lead ? `${lead.first_name} ${lead.last_name}` : "Lead",
@@ -39,7 +40,7 @@ export default async function LeadDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await hydratePersistedActivities();
+  await hydratePipelineForRequest();
   const { id } = await params;
   const store = getStore();
   const lead = store.getLead(id);

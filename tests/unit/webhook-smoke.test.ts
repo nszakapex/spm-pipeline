@@ -151,11 +151,17 @@ describe("go-live smoke — health and HubSpot v3 HTTP", () => {
   it("reports HubSpot v3 waiting when the client secret is absent", async () => {
     const res = await healthGet();
     const json = (await res.json()) as {
-      webhooks: { hubspotV3Ready: boolean; waitingOnYou: string[] };
+      persistReady: boolean;
+      webhooks: { hubspotV3Ready: boolean; persistReady: boolean; waitingOnYou: string[] };
     };
+    expect(json.persistReady).toBe(false);
+    expect(json.webhooks.persistReady).toBe(false);
     expect(json.webhooks.hubspotV3Ready).toBe(false);
     expect(json.webhooks.waitingOnYou.some((item) => item.includes("HUBSPOT_CLIENT_SECRET"))).toBe(
       true,
+    );
+    expect(json.webhooks.waitingOnYou.some((item) => item.toLowerCase().includes("supabase"))).toBe(
+      false,
     );
   });
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { hydratePersistedActivities } from "@/lib/db/activity-persist";
+import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import {
   WORKING_REASON_LABEL,
   getNurtureQueues,
@@ -11,7 +11,7 @@ import { formatOpsDate } from "@/lib/utils";
 export const metadata = { title: "Nurture" };
 
 export default async function NurturePage() {
-  await hydratePersistedActivities();
+  await hydratePipelineForRequest();
   const sections = getNurtureQueues();
 
   return (

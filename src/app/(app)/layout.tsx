@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth/session";
-import { hydratePersistedActivities } from "@/lib/db/activity-persist";
+import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import {
   AppSidebar,
   MobileBottomNav,
@@ -14,7 +14,7 @@ export default async function AppLayout({
 }) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  await hydratePersistedActivities();
+  await hydratePipelineForRequest();
 
   return (
     <div className="spm-shell">

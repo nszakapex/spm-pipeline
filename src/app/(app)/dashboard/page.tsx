@@ -3,14 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { getDashboardMetrics } from "@/lib/analytics/queries";
 import { getSessionUser } from "@/lib/auth/session";
 import { isAdminRole } from "@/lib/auth/roles";
-import { hydratePersistedActivities } from "@/lib/db/activity-persist";
+import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import { WORKING_REASON_LABEL } from "@/lib/nurture/work-queue";
 import { SCORE_BAND_LABELS, formatNextAction } from "@/types/domain";
 
 export const metadata = { title: "Home" };
 
 export default async function DashboardPage() {
-  await hydratePersistedActivities();
+  await hydratePipelineForRequest();
   const session = await getSessionUser();
   const m = getDashboardMetrics();
   const healthIssues = m.health.components.filter((c) => c.violations > 0);
