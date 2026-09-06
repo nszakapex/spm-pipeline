@@ -190,7 +190,7 @@ export async function hydrateStoreFromSupabase(): Promise<boolean> {
     receipts,
     seenEvents,
   ]) {
-    throwPersistError("hydrate", result.error);
+    if (result.error) return false;
   }
 
   const snapshot = snapshotFromPersistRows({
