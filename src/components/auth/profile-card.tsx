@@ -36,7 +36,7 @@ export function ProfileCard({
         <p className="text-sm font-semibold text-[var(--spm-navy)]">{name}</p>
         <p className="truncate text-xs text-[var(--spm-text-muted)]">{email}</p>
         <p className="mt-1 text-[11px] text-[var(--spm-text-muted)]">
-          {ROLE_LABEL[role]} · Demo · HubSpot mock
+          {ROLE_LABEL[role]}
         </p>
       </div>
     </div>

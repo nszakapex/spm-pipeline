@@ -46,7 +46,7 @@ describe("proxy route protection", () => {
     expect(res.headers.get("location")).toBeNull();
   });
 
-  it("allows /login even when a verified session cookie is present (page redirects)", () => {
+  it("allows /login even when a verified session cookie is present (no proxy bounce)", () => {
     const token = createDemoSessionToken(
       "user_001",
       TEST_ONLY_DEMO_SESSION_SECRET,

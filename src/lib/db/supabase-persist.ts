@@ -119,28 +119,6 @@ export function persistRowsFromSnapshot(snapshot: OverlaySnapshot): PersistRows 
   };
 }
 
-export function snapshotFromPersistRows(rows: PersistRows): OverlaySnapshot {
-  return {
-    leadPatches: rows.leadState.filter((row) => row.kind === "patch").map((row) => row.body),
-    extraLeads: rows.leadState.filter((row) => row.kind === "extra").map((row) => row.body),
-    extraActivities: rows.activities.map((row) => row.body),
-    extraSourceEvents: rows.sourceEvents.map((row) => row.body as LeadSourceEvent),
-    extraSyncEvents: rows.syncEvents.map((row) => row.body as IntegrationSyncEvent),
-    scoreFactors: rows.scoreFactors.map((row) => ({
-      leadId: row.lead_id,
-      factors: row.body,
-    })),
-    extraScoreSnapshots: rows.scoreSnapshots.map((row) => row.body),
-    ingestReceipts: rows.receipts.map((row) => row.body),
-    seenExternalIds: [
-      ...new Set([
-        ...rows.seenEvents.map((row) => row.idempotency_key),
-        ...rows.receipts.map((row) => row.idempotency_key),
-      ]),
-    ],
-  };
-}
-
 function throwPersistError(action: string, error: { message?: string } | null): void {
   if (!error) return;
   throw new Error(`Pipeline persist ${action} failed`);
@@ -156,56 +134,106 @@ function getPersistClient(): PersistClient | null {
 
 export { isSupabasePersistConfigured } from "@/lib/env";
 
+function isPersistRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function hasPersistId(value: unknown): value is { id: string } {
+  return isPersistRecord(value) && typeof value.id === "string" && value.id.length > 0;
+}
+
+export function snapshotFromPersistRows(rows: PersistRows): OverlaySnapshot {
+  return {
+    leadPatches: rows.leadState
+      .filter((row) => row.kind === "patch" && hasPersistId(row.body))
+      .map((row) => row.body),
+    extraLeads: rows.leadState
+      .filter((row) => row.kind === "extra" && hasPersistId(row.body))
+      .map((row) => row.body),
+    extraActivities: rows.activities.filter((row) => hasPersistId(row.body)).map((row) => row.body),
+    extraSourceEvents: rows.sourceEvents
+      .filter((row) => hasPersistId(row.body))
+      .map((row) => row.body as LeadSourceEvent),
+    extraSyncEvents: rows.syncEvents
+      .filter((row) => hasPersistId(row.body))
+      .map((row) => row.body as IntegrationSyncEvent),
+    scoreFactors: rows.scoreFactors
+      .filter((row) => typeof row.lead_id === "string" && Array.isArray(row.body))
+      .map((row) => ({
+        leadId: row.lead_id,
+        factors: row.body,
+      })),
+    extraScoreSnapshots: rows.scoreSnapshots
+      .filter((row) => hasPersistId(row.body))
+      .map((row) => row.body),
+    ingestReceipts: rows.receipts.filter((row) => hasPersistId(row.body)).map((row) => row.body),
+    seenExternalIds: [
+      ...new Set([
+        ...rows.seenEvents
+          .map((row) => row.idempotency_key)
+          .filter((key): key is string => typeof key === "string" && key.length > 0),
+        ...rows.receipts
+          .map((row) => row.idempotency_key)
+          .filter((key): key is string => typeof key === "string" && key.length > 0),
+      ]),
+    ],
+  };
+}
+
 export async function hydrateStoreFromSupabase(): Promise<boolean> {
-  const client = getPersistClient();
-  if (!client) return false;
+  try {
+    const client = getPersistClient();
+    if (!client) return false;
 
-  const [
-    leadState,
-    activities,
-    sourceEvents,
-    syncEvents,
-    scoreFactors,
-    scoreSnapshots,
-    receipts,
-    seenEvents,
-  ] = await Promise.all([
-    client.from("pipeline_lead_state").select("id, kind, body"),
-    client.from("pipeline_activities").select("id, lead_id, body"),
-    client.from("pipeline_source_events").select("id, body"),
-    client.from("pipeline_sync_events").select("id, body"),
-    client.from("pipeline_score_factors").select("lead_id, body"),
-    client.from("pipeline_score_snapshots").select("id, lead_id, body"),
-    client.from("pipeline_ingest_receipts").select("id, idempotency_key, body"),
-    client.from("pipeline_seen_events").select("idempotency_key"),
-  ]);
+    const [
+      leadState,
+      activities,
+      sourceEvents,
+      syncEvents,
+      scoreFactors,
+      scoreSnapshots,
+      receipts,
+      seenEvents,
+    ] = await Promise.all([
+      client.from("pipeline_lead_state").select("id, kind, body"),
+      client.from("pipeline_activities").select("id, lead_id, body"),
+      client.from("pipeline_source_events").select("id, body"),
+      client.from("pipeline_sync_events").select("id, body"),
+      client.from("pipeline_score_factors").select("lead_id, body"),
+      client.from("pipeline_score_snapshots").select("id, lead_id, body"),
+      client.from("pipeline_ingest_receipts").select("id, idempotency_key, body"),
+      client.from("pipeline_seen_events").select("idempotency_key"),
+    ]);
 
-  for (const result of [
-    leadState,
-    activities,
-    sourceEvents,
-    syncEvents,
-    scoreFactors,
-    scoreSnapshots,
-    receipts,
-    seenEvents,
-  ]) {
-    if (result.error) return false;
+    for (const result of [
+      leadState,
+      activities,
+      sourceEvents,
+      syncEvents,
+      scoreFactors,
+      scoreSnapshots,
+      receipts,
+      seenEvents,
+    ]) {
+      if (result.error) return false;
+    }
+
+    const snapshot = snapshotFromPersistRows({
+      leadState: (leadState.data ?? []) as PersistLeadStateRow[],
+      activities: (activities.data ?? []) as PersistActivityRow[],
+      sourceEvents: (sourceEvents.data ?? []) as PersistJsonRow[],
+      syncEvents: (syncEvents.data ?? []) as PersistJsonRow[],
+      scoreFactors: (scoreFactors.data ?? []) as PersistScoreFactorRow[],
+      scoreSnapshots: (scoreSnapshots.data ?? []) as PersistScoreSnapshotRow[],
+      receipts: (receipts.data ?? []) as PersistReceiptRow[],
+      seenEvents: (seenEvents.data ?? []) as PersistSeenRow[],
+    });
+
+    replaceStoreOverlay(snapshotToOverlay(snapshot));
+    return true;
+  } catch {
+    return false;
   }
-
-  const snapshot = snapshotFromPersistRows({
-    leadState: (leadState.data ?? []) as PersistLeadStateRow[],
-    activities: (activities.data ?? []) as PersistActivityRow[],
-    sourceEvents: (sourceEvents.data ?? []) as PersistJsonRow[],
-    syncEvents: (syncEvents.data ?? []) as PersistJsonRow[],
-    scoreFactors: (scoreFactors.data ?? []) as PersistScoreFactorRow[],
-    scoreSnapshots: (scoreSnapshots.data ?? []) as PersistScoreSnapshotRow[],
-    receipts: (receipts.data ?? []) as PersistReceiptRow[],
-    seenEvents: (seenEvents.data ?? []) as PersistSeenRow[],
-  });
-
-  replaceStoreOverlay(snapshotToOverlay(snapshot));
-  return true;
 }
 
 async function upsertRows(

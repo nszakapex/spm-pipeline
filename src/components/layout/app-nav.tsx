@@ -103,7 +103,6 @@ export function AppSidebar({
       <div className="mt-4 rounded-lg border border-[rgba(7,22,74,0.1)] bg-white p-3">
         <p className="text-sm font-semibold text-[var(--spm-navy)]">{userName}</p>
         <p className="truncate text-xs text-[var(--spm-text-muted)]">{userEmail}</p>
-        <p className="mt-1 text-[11px] text-[var(--spm-text-muted)]">Demo · HubSpot mock</p>
         <form action="/api/logout" method="post" className="mt-2">
           <button
             type="submit"

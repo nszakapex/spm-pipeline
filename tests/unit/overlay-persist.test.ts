@@ -52,6 +52,30 @@ describe("overlay snapshot persist mapping", () => {
     expect(getStore().getLead(newbie!.id)?.stage).toBe("ATTEMPTING_CONTACT");
   });
 
+  it("drops persist rows whose body is missing an id", () => {
+    const snapshot = snapshotFromPersistRows({
+      leadState: [
+        { id: "lead_bad", kind: "patch", body: { first_name: "Nope" } as never },
+        {
+          id: "lead_001",
+          kind: "patch",
+          body: { ...getStore().getLead("lead_001")!, stage: "CONNECTED" },
+        },
+      ],
+      activities: [{ id: "act_bad", lead_id: "lead_001", body: { summary: "x" } as never }],
+      sourceEvents: [],
+      syncEvents: [],
+      scoreFactors: [{ lead_id: "lead_001", body: [] }],
+      scoreSnapshots: [],
+      receipts: [],
+      seenEvents: [{ idempotency_key: "hubspot:keep" }, { idempotency_key: "" }],
+    });
+    expect(snapshot.leadPatches).toHaveLength(1);
+    expect(snapshot.leadPatches[0]?.id).toBe("lead_001");
+    expect(snapshot.extraActivities).toHaveLength(0);
+    expect(snapshot.seenExternalIds).toEqual(["hubspot:keep"]);
+  });
+
   it("no-ops persist when Supabase credentials are absent", async () => {
     await expect(persistStoreOverlay()).resolves.toBeUndefined();
   });
