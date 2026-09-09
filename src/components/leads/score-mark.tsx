@@ -35,7 +35,7 @@ const TICK_ON: Record<HeatLevel, string> = {
 };
 
 export function heatLevelFromBand(band: ScoreBand): HeatLevel {
-  return LEVEL_FROM_BAND[band];
+  return LEVEL_FROM_BAND[band] ?? "cool";
 }
 
 export function scoreHeatFilled(band: ScoreBand): number {

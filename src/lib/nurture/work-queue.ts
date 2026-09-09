@@ -145,13 +145,13 @@ function compareWorkItems(a: WorkQueueItem, b: WorkQueueItem): number {
   const critA = a.flags.filter((f) => f.severity === "critical").length;
   const critB = b.flags.filter((f) => f.severity === "critical").length;
   if (critB !== critA) return critB - critA;
-  return b.lead.score - a.lead.score;
+  return (Number(b.lead.score) || 0) - (Number(a.lead.score) || 0);
 }
 
 export function getWorkNextQueue(now = new Date(), limit = 10): WorkQueueItem[] {
   const leads = getStore()
     .getLeads()
-    .filter((lead) => !TERMINAL_STAGES.includes(lead.stage));
+    .filter((lead) => Boolean(lead?.id && lead.stage) && !TERMINAL_STAGES.includes(lead.stage));
   const items = leads.map((lead) => toWorkItem(lead, now));
   const seen = new Set<string>();
   const unique = items.filter((item) => {
@@ -165,7 +165,7 @@ export function getWorkNextQueue(now = new Date(), limit = 10): WorkQueueItem[] 
   );
   const filler = unique
     .filter((item) => !actionable.some((a) => a.lead.id === item.lead.id))
-    .sort((a, b) => b.lead.score - a.lead.score);
+    .sort((a, b) => (Number(b.lead.score) || 0) - (Number(a.lead.score) || 0));
 
   return [...actionable.sort(compareWorkItems), ...filler].slice(0, limit);
 }
@@ -177,7 +177,7 @@ export function getNurtureQueues(now = new Date()): {
 }[] {
   const items = getStore()
     .getLeads()
-    .filter((lead) => !TERMINAL_STAGES.includes(lead.stage))
+    .filter((lead) => Boolean(lead?.id && lead.stage) && !TERMINAL_STAGES.includes(lead.stage))
     .map((lead) => toWorkItem(lead, now));
 
   return NURTURE_SECTION_KEYS.map((key) => ({

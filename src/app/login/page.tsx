@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { BrandBanner } from "@/components/brand/brand-mark";
 import { ProfileCard } from "@/components/auth/profile-card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Panel } from "@/components/ui/panel";
-import { demoLoginAction } from "@/lib/auth/actions";
+import { demoLoginAction, logoutAction } from "@/lib/auth/actions";
 import { DEMO_LOGIN_OPTIONS, findDemoLoginOption, getSessionUser } from "@/lib/auth/session";
 import { brandTokens } from "@/lib/brand-tokens";
 import { isDemoMode } from "@/lib/env";
@@ -19,14 +19,11 @@ export default async function LoginPage({
   searchParams: Promise<{ profile?: string; notice?: string }>;
 }) {
   const session = await getSessionUser();
-  if (session) {
-    redirect("/dashboard");
-  }
-
   const demo = isDemoMode();
   const params = await searchParams;
   const selected = params.profile ? findDemoLoginOption(params.profile) : undefined;
   const badPassword = params.notice === "bad-password";
+  const forceSwitch = params.notice === "switch";
 
   return (
     <div className="relative flex min-h-screen items-center justify-center px-4 py-10">
@@ -46,14 +43,35 @@ export default async function LoginPage({
               {brandTokens.name.product}
             </h1>
             <p className="mt-3 text-sm leading-6 text-[var(--spm-text-muted)]">
-              {selected
-                ? `Sign in as ${selected.name} to work the book.`
-                : "Choose your profile, then sign in to work the book."}
+              {session && !forceSwitch
+                ? `You're signed in as ${session.name}. Continue, or switch profile.`
+                : selected
+                  ? `Sign in as ${selected.name} to work the book.`
+                  : "Choose your profile, then sign in to work the book."}
             </p>
           </div>
 
           {demo ? (
-            selected ? (
+            session && !forceSwitch ? (
+              <div className="w-full space-y-3">
+                <ProfileCard
+                  name={session.name}
+                  email={session.email}
+                  role={session.role}
+                />
+                <Link href="/dashboard" className={cn(buttonVariants(), "h-12 w-full px-5")}>
+                  Continue to Home
+                </Link>
+                <form action={logoutAction}>
+                  <button
+                    type="submit"
+                    className="text-xs font-bold text-[var(--spm-blue-secondary)] hover:underline"
+                  >
+                    Use a different profile
+                  </button>
+                </form>
+              </div>
+            ) : selected ? (
               <div className="w-full space-y-4">
                 <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--spm-text-muted)]">
                   Profile
@@ -111,10 +129,6 @@ export default async function LoginPage({
                     />
                   </Link>
                 ))}
-                <p className="pt-2 text-xs leading-5 text-[var(--spm-text-muted)]">
-                  Demo session cookie only. Records are synthetic. HubSpot is
-                  mock. Supabase Auth is not enabled.
-                </p>
               </div>
             )
           ) : (

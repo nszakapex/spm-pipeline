@@ -14,7 +14,11 @@ export default async function AppLayout({
 }) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  await hydratePipelineForRequest();
+  try {
+    await hydratePipelineForRequest();
+  } catch {
+    // Signed-in Home must still render on seed data.
+  }
 
   return (
     <div className="spm-shell">

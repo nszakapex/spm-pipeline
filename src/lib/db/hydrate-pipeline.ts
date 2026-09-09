@@ -9,5 +9,9 @@ export const hydratePipelineForRequest = cache(async function hydratePipelineFor
   } catch {
     // Persist is optional for the demo board. A down store must not blank Home.
   }
-  await hydratePersistedActivities();
+  try {
+    await hydratePersistedActivities();
+  } catch {
+    // A stale signed activity cookie must not blank Home after sign-in.
+  }
 });
