@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { isHydrateFresh, markHydrateFresh } from "@/lib/db/hydrate-clock";
 import { getSupabasePersistConfig } from "@/lib/env";
 import {
   getStoreOverlay,
@@ -181,6 +182,8 @@ export function snapshotFromPersistRows(rows: PersistRows): OverlaySnapshot {
 }
 
 export async function hydrateStoreFromSupabase(): Promise<boolean> {
+  if (isHydrateFresh()) return true;
+
   try {
     const client = getPersistClient();
     if (!client) return false;
@@ -230,6 +233,7 @@ export async function hydrateStoreFromSupabase(): Promise<boolean> {
     });
 
     replaceStoreOverlay(snapshotToOverlay(snapshot));
+    markHydrateFresh();
     return true;
   } catch {
     return false;
@@ -261,4 +265,5 @@ export async function persistStoreOverlay(): Promise<void> {
     upsertRows(client, "pipeline_ingest_receipts", rows.receipts),
     upsertRows(client, "pipeline_seen_events", rows.seenEvents),
   ]);
+  markHydrateFresh();
 }

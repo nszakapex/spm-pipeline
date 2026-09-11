@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth/session";
 import { appendPersistedActivity } from "@/lib/db/activity-persist";
@@ -69,5 +70,6 @@ export async function logLeadActivityAction(formData: FormData) {
     // Cookie backup still holds the log for this browser.
   }
 
+  revalidatePath("/", "layout");
   redirect(`/leads/${leadId}`);
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ScoreMark } from "@/components/leads/score-mark";
+import { FilterChipRow } from "@/components/nav/filter-chip";
 import { Badge } from "@/components/ui/badge";
 import { getLeadFlags, filterLeadsByFlag } from "@/lib/analytics/queries";
 import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
@@ -131,17 +132,7 @@ export default async function LeadsPage({
         </form>
       </header>
 
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {filters.map((f) => (
-          <Link
-            key={f.href}
-            href={f.href}
-            className={`spm-chip ${f.active ? "spm-chip-active" : ""}`}
-          >
-            {f.label}
-          </Link>
-        ))}
-      </div>
+      <FilterChipRow items={filters} />
 
       {/* Desktop table */}
       <div className="spm-panel hidden overflow-hidden md:block">

@@ -13,6 +13,7 @@ import { getLeadFlags } from "@/lib/analytics/queries";
 import { isAdminRole } from "@/lib/auth/roles";
 import { getSessionUser } from "@/lib/auth/session";
 import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
+import { getActivitiesForLead } from "@/lib/db/lookups";
 import { getStore } from "@/lib/db/store";
 import { getEnv } from "@/lib/env";
 import {
@@ -53,12 +54,9 @@ export default async function LeadDetailPage({
   const factors = store
     .getScoreFactors(lead.id)
     .sort((a, b) => b.points - a.points);
-  const activities = store
-    .getActivities(lead.id)
-    .sort(
-      (a, b) =>
-        new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime(),
-    );
+  const activities = [...getActivitiesForLead(lead.id)].sort(
+    (a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime(),
+  );
   const sourceEvent = store
     .getSourceEvents()
     .find((e) => e.matched_lead_id === lead.id);

@@ -1,5 +1,7 @@
 import { getDemoDataset, resetDemoDatasetCache, type DemoDataset } from "@/lib/demo/seed";
+import { resetHydrateClock } from "@/lib/db/hydrate-clock";
 import {
+  bumpOverlayRevision,
   findOverlayReceipt,
   getStoreOverlay,
   overlayHasEvent,
@@ -155,6 +157,7 @@ function createDemoStore(): DataStore {
         o.scoreFactorsByLead.set(mutation.lead.id, mutation.scoreFactors);
       }
       if (mutation.scoreSnapshot) o.extraScoreSnapshots.push(mutation.scoreSnapshot);
+      bumpOverlayRevision();
       return mutation.receipt;
     },
   };
@@ -175,4 +178,5 @@ export function getStore(): DataStore {
 export function resetRuntimeStore(): void {
   resetDemoDatasetCache();
   resetStoreOverlay();
+  resetHydrateClock();
 }

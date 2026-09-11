@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { ScoreMark } from "@/components/leads/score-mark";
+import { FilterChipRow } from "@/components/nav/filter-chip";
 import { Badge } from "@/components/ui/badge";
 import { getLeadFlags } from "@/lib/analytics/queries";
 import { hydratePipelineForRequest } from "@/lib/db/hydrate-pipeline";
 import { getStore } from "@/lib/db/store";
-import { OPEN_STAGES, STAGE_LABELS, DISPOSITION_LABELS, formatNextAction, type LeadStage } from "@/types/domain";
+import {
+  OPEN_STAGES,
+  STAGE_LABELS,
+  DISPOSITION_LABELS,
+  formatNextAction,
+  type Lead,
+  type LeadStage,
+} from "@/types/domain";
 
 export const metadata = { title: "Pipeline" };
 
@@ -51,20 +59,17 @@ export default async function PipelinePage({
 
       {/* Mobile stage list */}
       <div className="md:hidden">
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {columns.map((c) => (
-            <Link
-              key={c.stage}
-              href={`/pipeline?stage=${c.stage}`}
-              className={`spm-chip ${mobileStage === c.stage ? "spm-chip-active" : ""}`}
-            >
-              {STAGE_LABELS[c.stage]} ({c.items.length})
-            </Link>
-          ))}
-        </div>
+        <FilterChipRow
+          className="flex gap-2 overflow-x-auto pb-2"
+          items={columns.map((c) => ({
+            href: `/pipeline?stage=${c.stage}`,
+            label: `${STAGE_LABELS[c.stage]} (${c.items.length})`,
+            active: mobileStage === c.stage,
+          }))}
+        />
         <ul className="mt-3 space-y-3">
           {mobileItems.map((lead) => (
-            <LeadCard key={lead.id} leadId={lead.id} />
+            <LeadCard key={lead.id} lead={lead} />
           ))}
         </ul>
       </div>
@@ -87,7 +92,7 @@ export default async function PipelinePage({
             <ul className="spm-scroll max-h-[70vh] space-y-2 overflow-y-auto p-2">
               {col.items.map((lead) => (
                 <li key={lead.id}>
-                  <LeadCard leadId={lead.id} />
+                  <LeadCard lead={lead} />
                 </li>
               ))}
             </ul>
@@ -98,9 +103,7 @@ export default async function PipelinePage({
   );
 }
 
-function LeadCard({ leadId }: { leadId: string }) {
-  const lead = getStore().getLead(leadId);
-  if (!lead) return null;
+function LeadCard({ lead }: { lead: Lead }) {
   const owner = lead.owner_id ? getStore().getUser(lead.owner_id) : undefined;
   const flags = getLeadFlags(lead);
   return (

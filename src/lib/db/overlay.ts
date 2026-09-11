@@ -35,17 +35,28 @@ function emptyOverlay(): StoreOverlay {
 }
 
 let overlay: StoreOverlay = emptyOverlay();
+let overlayRevision = 0;
 
 export function getStoreOverlay(): StoreOverlay {
   return overlay;
 }
 
+export function getOverlayRevision(): number {
+  return overlayRevision;
+}
+
+export function bumpOverlayRevision(): void {
+  overlayRevision += 1;
+}
+
 export function resetStoreOverlay(): void {
   overlay = emptyOverlay();
+  bumpOverlayRevision();
 }
 
 export function replaceStoreOverlay(next: StoreOverlay): void {
   overlay = next;
+  bumpOverlayRevision();
 }
 
 export interface OverlaySnapshot {
