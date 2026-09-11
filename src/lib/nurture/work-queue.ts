@@ -1,6 +1,7 @@
+import { getActivitiesByLeadMap } from "@/lib/db/lookups";
 import { getStore } from "@/lib/db/store";
 import { evaluateLeadRisks, type RiskFlag } from "@/lib/nurture/flags";
-import { TERMINAL_STAGES, type Lead } from "@/types/domain";
+import { TERMINAL_STAGES, type Activity, type Lead } from "@/types/domain";
 
 export type WorkingReason =
   | "needs_reply"
@@ -119,8 +120,12 @@ export function getSecondaryReasons(
   return reasons.filter((reason) => reason !== primary);
 }
 
-function toWorkItem(lead: Lead, now: Date): WorkQueueItem {
-  const flags = evaluateLeadRisks(lead, getStore().getActivities(lead.id), now);
+function toWorkItem(
+  lead: Lead,
+  now: Date,
+  activitiesByLead: Map<string, Activity[]>,
+): WorkQueueItem {
+  const flags = evaluateLeadRisks(lead, activitiesByLead.get(lead.id) ?? [], now);
   const primary = getPrimaryWorkingReason(lead, flags, now);
   return {
     lead,
@@ -149,10 +154,11 @@ function compareWorkItems(a: WorkQueueItem, b: WorkQueueItem): number {
 }
 
 export function getWorkNextQueue(now = new Date(), limit = 10): WorkQueueItem[] {
+  const activitiesByLead = getActivitiesByLeadMap();
   const leads = getStore()
     .getLeads()
     .filter((lead) => Boolean(lead?.id && lead.stage) && !TERMINAL_STAGES.includes(lead.stage));
-  const items = leads.map((lead) => toWorkItem(lead, now));
+  const items = leads.map((lead) => toWorkItem(lead, now, activitiesByLead));
   const seen = new Set<string>();
   const unique = items.filter((item) => {
     if (seen.has(item.lead.id)) return false;
@@ -175,10 +181,11 @@ export function getNurtureQueues(now = new Date()): {
   title: string;
   leads: WorkQueueItem[];
 }[] {
+  const activitiesByLead = getActivitiesByLeadMap();
   const items = getStore()
     .getLeads()
     .filter((lead) => Boolean(lead?.id && lead.stage) && !TERMINAL_STAGES.includes(lead.stage))
-    .map((lead) => toWorkItem(lead, now));
+    .map((lead) => toWorkItem(lead, now, activitiesByLead));
 
   return NURTURE_SECTION_KEYS.map((key) => ({
     key,

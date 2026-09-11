@@ -64,17 +64,19 @@ export function ScoreMark({
       >
         {LEVEL_LABEL[level]}
       </span>
-      <span className="flex w-full min-w-[4.25rem] gap-0.5" aria-hidden>
-        {[1, 2, 3].map((tick) => (
-          <span
-            key={tick}
-            className={cn(
-              "h-1.5 flex-1 rounded-full",
-              tick <= filled ? TICK_ON[level] : "bg-[rgba(7,22,74,0.08)]",
-            )}
-          />
-        ))}
-      </span>
+      {compact ? null : (
+        <span className="flex w-full min-w-[4.25rem] gap-0.5" aria-hidden>
+          {[1, 2, 3].map((tick) => (
+            <span
+              key={tick}
+              className={cn(
+                "h-1.5 flex-1 rounded-full",
+                tick <= filled ? TICK_ON[level] : "bg-[rgba(7,22,74,0.08)]",
+              )}
+            />
+          ))}
+        </span>
+      )}
     </span>
   );
 }

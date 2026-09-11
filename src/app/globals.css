@@ -81,6 +81,12 @@ a {
   animation: fade-up 0.4s ease-out both;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    animation: none;
+  }
+}
+
 .spm-shell {
   display: flex;
   min-height: 100vh;

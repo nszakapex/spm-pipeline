@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   BarChart3,
   Cable,
@@ -30,19 +31,68 @@ const ICONS: Record<NavHref, typeof LayoutDashboard> = {
   "/more": Ellipsis,
 };
 
+const PREFETCH_HREFS: NavHref[] = [
+  "/dashboard",
+  "/leads",
+  "/nurture",
+  "/pipeline",
+  "/sources",
+  "/analytics",
+  "/integrations",
+  "/settings",
+  "/more",
+];
+
+let didPrefetchAppRoutes = false;
+
+function pathIsActive(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function usePrefetchAppRoutes() {
+  const router = useRouter();
+  useEffect(() => {
+    if (didPrefetchAppRoutes) return;
+    didPrefetchAppRoutes = true;
+    for (const href of PREFETCH_HREFS) {
+      router.prefetch(href);
+    }
+  }, [router]);
+}
+
+function useInstantPath() {
+  const pathname = usePathname();
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
+
+  return {
+    current: pendingHref ?? pathname,
+    markPending: (href: string) => {
+      if (href !== pathname) setPendingHref(href);
+    },
+  };
+}
+
 function NavLink({
   href,
   label,
   active,
+  onNavigate,
 }: {
   href: NavHref;
   label: string;
   active: boolean;
+  onNavigate: (href: NavHref) => void;
 }) {
   const Icon = ICONS[href];
   return (
     <Link
       href={href}
+      prefetch
+      onClick={() => onNavigate(href)}
       className={cn(
         "flex items-center gap-3 rounded-[7px] px-3 py-2 text-[13px] font-semibold",
         active
@@ -56,10 +106,6 @@ function NavLink({
   );
 }
 
-function pathIsActive(pathname: string, href: string): boolean {
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
-
 export function AppSidebar({
   userName,
   userEmail,
@@ -69,7 +115,8 @@ export function AppSidebar({
   userEmail: string;
   role: UserRole;
 }) {
-  const pathname = usePathname();
+  usePrefetchAppRoutes();
+  const { current, markPending } = useInstantPath();
   const { sales, admin } = desktopNavForRole(role);
 
   return (
@@ -81,7 +128,8 @@ export function AppSidebar({
             key={item.href}
             href={item.href}
             label={item.label}
-            active={pathIsActive(pathname, item.href)}
+            active={pathIsActive(current, item.href)}
+            onNavigate={markPending}
           />
         ))}
         {admin.length > 0 ? (
@@ -94,7 +142,8 @@ export function AppSidebar({
                 key={item.href}
                 href={item.href}
                 label={item.label}
-                active={pathIsActive(pathname, item.href)}
+                active={pathIsActive(current, item.href)}
+                onNavigate={markPending}
               />
             ))}
           </>
@@ -117,7 +166,8 @@ export function AppSidebar({
 }
 
 export function MobileBottomNav({ role }: { role: UserRole }) {
-  const pathname = usePathname();
+  usePrefetchAppRoutes();
+  const { current, markPending } = useInstantPath();
   const items = mobilePrimaryNavForRole(role);
   return (
     <nav className="spm-dock md:hidden" aria-label="Primary">
@@ -128,12 +178,14 @@ export function MobileBottomNav({ role }: { role: UserRole }) {
         )}
       >
         {items.map((item) => {
-          const active = pathIsActive(pathname, item.href);
+          const active = pathIsActive(current, item.href);
           const Icon = ICONS[item.href];
           return (
             <li key={item.href}>
               <Link
                 href={item.href}
+                prefetch
+                onClick={() => markPending(item.href)}
                 className={cn(
                   "flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg text-[11px] font-semibold",
                   active
@@ -153,6 +205,7 @@ export function MobileBottomNav({ role }: { role: UserRole }) {
 }
 
 export function MobileTopBar({ role, title }: { role: UserRole; title?: string }) {
+  const moreHref = role === "admin" ? "/more" : "/settings";
   return (
     <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-[rgba(7,22,74,0.08)] bg-white px-4 py-3 md:hidden">
       <BrandMark />
@@ -161,7 +214,8 @@ export function MobileTopBar({ role, title }: { role: UserRole; title?: string }
       ) : null}
       <div className="flex items-center gap-1">
         <Link
-          href={role === "admin" ? "/more" : "/settings"}
+          href={moreHref}
+          prefetch
           className="grid size-10 place-items-center rounded-full text-[var(--spm-navy)]/70"
           aria-label={role === "admin" ? "More" : "Settings"}
         >

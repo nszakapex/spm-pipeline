@@ -1,3 +1,4 @@
+import { getActivitiesByLeadMap, getActivitiesForLead } from "@/lib/db/lookups";
 import { getStore } from "@/lib/db/store";
 import { evaluateLeadRisks, type RiskFlagCode } from "@/lib/nurture/flags";
 import {
@@ -8,21 +9,11 @@ import { getWorkNextQueue } from "@/lib/nurture/work-queue";
 import type { Activity, Lead } from "@/types/domain";
 
 export function getActivitiesByLead(): Map<string, Activity[]> {
-  const map = new Map<string, Activity[]>();
-  for (const a of getStore().getActivities()) {
-    const list = map.get(a.lead_id) ?? [];
-    list.push(a);
-    map.set(a.lead_id, list);
-  }
-  return map;
+  return getActivitiesByLeadMap();
 }
 
 export function getLeadFlags(lead: Lead, now = new Date()) {
-  return evaluateLeadRisks(
-    lead,
-    getActivitiesByLead().get(lead.id) ?? [],
-    now,
-  );
+  return evaluateLeadRisks(lead, getActivitiesForLead(lead.id), now);
 }
 
 export function filterLeadsByFlag(code: RiskFlagCode, now = new Date()): Lead[] {
