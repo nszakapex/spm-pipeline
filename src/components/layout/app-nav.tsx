@@ -43,6 +43,8 @@ const PREFETCH_HREFS: NavHref[] = [
   "/more",
 ];
 
+let didPrefetchAppRoutes = false;
+
 function pathIsActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
@@ -50,6 +52,8 @@ function pathIsActive(pathname: string, href: string): boolean {
 function usePrefetchAppRoutes() {
   const router = useRouter();
   useEffect(() => {
+    if (didPrefetchAppRoutes) return;
+    didPrefetchAppRoutes = true;
     for (const href of PREFETCH_HREFS) {
       router.prefetch(href);
     }
@@ -64,10 +68,11 @@ function useInstantPath() {
     setPendingHref(null);
   }, [pathname]);
 
-  const current = pendingHref ?? pathname;
   return {
-    current,
-    markPending: (href: string) => setPendingHref(href),
+    current: pendingHref ?? pathname,
+    markPending: (href: string) => {
+      if (href !== pathname) setPendingHref(href);
+    },
   };
 }
 
