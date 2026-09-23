@@ -37,7 +37,7 @@ openssl rand -hex 32
 npm run dev
 ```
 
-Open http://localhost:3000 → sign in as **Max Sussman** (Sales). Other demo logins: **Mack Ianni** (Sales) and **Nate Szakallas** (Admin).
+Open http://localhost:3000 → sign in as **Sales**, **Desk**, or **Nate Szakallas** (Admin).
 
 Generate a secret without pasting it into chat or commits:
 

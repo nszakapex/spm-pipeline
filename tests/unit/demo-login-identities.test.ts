@@ -3,26 +3,26 @@ import { DEMO_LOGIN_OPTIONS } from "@/lib/auth/demo-login";
 import { DEMO_USERS } from "@/lib/demo/seed";
 
 describe("demo login identities", () => {
-  it("exposes Max, Mack, and Nate as the only login options", () => {
+  it("exposes two demo seats and Nate as the only login options", () => {
     expect(DEMO_LOGIN_OPTIONS.map((opt) => opt.label)).toEqual([
-      "Max Sussman (Sales)",
-      "Mack Ianni (Sales)",
+      "Sales (Sales)",
+      "Desk (Sales)",
       "Nate Szakallas (Admin)",
     ]);
   });
 
   it("keeps login ids and emails aligned with seeded users", () => {
     expect(DEMO_USERS.map((user) => user.name)).toEqual([
-      "Max Sussman",
-      "Mack Ianni",
+      "Sales",
+      "Desk",
       "Nate Szakallas",
     ]);
     expect(DEMO_LOGIN_OPTIONS.map((opt) => opt.id)).toEqual(
       DEMO_USERS.map((user) => user.id),
     );
     expect(DEMO_LOGIN_OPTIONS.map((opt) => opt.email)).toEqual([
-      "max.sussman@example.spm-pipeline.local",
-      "mack.ianni@example.spm-pipeline.local",
+      "sales@example.spm-pipeline.local",
+      "desk@example.spm-pipeline.local",
       "nate.szakallas@example.spm-pipeline.local",
     ]);
     for (const user of DEMO_USERS) {
