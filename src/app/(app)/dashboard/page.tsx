@@ -24,6 +24,16 @@ export default async function DashboardPage() {
         <p className="mt-1 max-w-2xl text-sm text-[var(--spm-text-muted)]">
           One list. Do the next step, then log what happened.
         </p>
+        <p className="mt-2 text-sm text-[var(--spm-text-muted)]">
+          This is the live board. The{" "}
+          <Link
+            href="/preview"
+            className="font-medium text-[var(--spm-blue-secondary)] hover:underline"
+          >
+            hiring preview
+          </Link>{" "}
+          is the same app, before sign-in.
+        </p>
       </header>
 
       <section className="spm-panel overflow-hidden">

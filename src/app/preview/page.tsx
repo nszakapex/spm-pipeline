@@ -50,10 +50,10 @@ export default function HiringPreviewPage() {
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:items-end">
             <Link
-              href="/login?profile=user_001"
+              href="/dashboard"
               className={cn(buttonVariants(), "h-12 px-6")}
             >
-              Open the live demo
+              Open the actual board
             </Link>
             <a
               href="https://github.com/nszakapex/spm-pipeline"
@@ -76,9 +76,9 @@ export default function HiringPreviewPage() {
             detail={`${board.hotCount} hot · pipeline health ${board.pipelineHealth}% · ${board.leadCount} in the demo set`}
           />
           <Fact
-            label="Try the signed-in board"
-            value="Max Sussman"
-            detail={`Password ${DEMO_LOGIN_PASSWORD} · then Home, Leads, Nurture, Pipeline`}
+            label="Same app, signed in"
+            value="Home board"
+            detail={`Sign in with a demo profile. Password ${DEMO_LOGIN_PASSWORD}.`}
           />
         </section>
 
@@ -185,8 +185,8 @@ export default function HiringPreviewPage() {
           <ul className="list-disc space-y-1.5 pl-5 text-sm text-[var(--spm-text-muted)]">
             <li>Signed-in sales board: Home, Leads, Nurture, Pipeline.</li>
             <li>
-              Demo login (Max, Mack, Nate) with a shared password. Viewer cannot
-              log activity.
+              Demo sign-in uses a shared password. A viewer profile cannot log
+              activity.
             </li>
             <li>
               HubSpot v3 webhook path at{" "}
