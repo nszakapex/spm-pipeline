@@ -18,10 +18,16 @@ describe("proxy route protection", () => {
     expect(res.headers.get("location")).toBe("http://localhost:3000/login");
   });
 
-  it("sends unauthenticated / to /login", () => {
+  it("sends unauthenticated / to the hiring-manager preview", () => {
     const res = proxy(req("/"));
     expect(res.status).toBe(307);
-    expect(res.headers.get("location")).toBe("http://localhost:3000/login");
+    expect(res.headers.get("location")).toBe("http://localhost:3000/preview");
+  });
+
+  it("keeps /preview public", () => {
+    const res = proxy(req("/preview"));
+    expect(res.status).toBe(200);
+    expect(res.headers.get("location")).toBeNull();
   });
 
   it("keeps /login reachable with an invalid demo cookie (no loop to dashboard)", () => {

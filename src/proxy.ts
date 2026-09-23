@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { DEMO_SESSION_COOKIE, verifyDemoSessionToken } from "@/lib/auth/demo-token";
 import { getEnv } from "@/lib/env";
 
-const PUBLIC_PATHS = ["/login", "/api/health", "/api/logout"];
+const PUBLIC_PATHS = ["/login", "/preview", "/api/health", "/api/logout"];
 
 function isPublicPath(pathname: string): boolean {
   if (pathname === "/api/webhooks" || pathname.startsWith("/api/webhooks/")) {
@@ -26,7 +26,7 @@ export function proxy(request: NextRequest) {
   try {
     secret = getEnv().DEMO_SESSION_SECRET;
   } catch {
-    if (pathname === "/api/health" || pathname === "/login") {
+    if (pathname === "/api/health" || pathname === "/login" || pathname === "/preview") {
       return NextResponse.next();
     }
     const url = request.nextUrl.clone();
@@ -40,7 +40,7 @@ export function proxy(request: NextRequest) {
 
   if (pathname === "/") {
     const url = request.nextUrl.clone();
-    url.pathname = hasVerifiedDemoSession ? "/dashboard" : "/login";
+    url.pathname = hasVerifiedDemoSession ? "/dashboard" : "/preview";
     return NextResponse.redirect(url);
   }
 
