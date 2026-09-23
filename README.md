@@ -4,6 +4,8 @@
 
 Internal sales integrity, pipeline, scoring, and nurture layer that sits on top of HubSpot. HubSpot remains the CRM source of truth.
 
+**Hiring manager preview (no login):** https://spm-pipeline.vercel.app/preview
+
 > We are not rebuilding HubSpot. We are making it impossible for Superpower Mentors to lose visibility into a lead between acquisition and close.
 
 **Phase 1 (demo hardening) is on this branch:** `cursor/spm-pipeline-mvp-e857`  

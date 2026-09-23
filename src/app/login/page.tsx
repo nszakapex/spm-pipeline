@@ -150,6 +150,12 @@ export default async function LoginPage({
           <p className="text-xs text-[var(--spm-text-muted)]">
             Built for {brandTokens.name.org}
           </p>
+          <Link
+            href="/preview"
+            className="text-xs font-bold text-[var(--spm-blue-secondary)] hover:underline"
+          >
+            Hiring manager preview
+          </Link>
         </div>
       </Panel>
     </div>
